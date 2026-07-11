@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class RadioCallListManager
+Partial Class frmRadioCallListManager
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,10 +22,12 @@ Partial Class RadioCallListManager
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(RadioCallListManager))
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmRadioCallListManager))
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImportRadioIDFileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SaveRecordsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SaveRecordsAsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExportCallListToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExportValidationReportToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -158,7 +160,7 @@ Partial Class RadioCallListManager
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ImportRadioIDFileToolStripMenuItem, Me.ExportCallListToolStripMenuItem, Me.ExportValidationReportToolStripMenuItem, Me.ExitToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ImportRadioIDFileToolStripMenuItem, Me.SaveRecordsToolStripMenuItem, Me.SaveRecordsAsToolStripMenuItem, Me.ExportCallListToolStripMenuItem, Me.ExportValidationReportToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "File"
@@ -169,6 +171,18 @@ Partial Class RadioCallListManager
         Me.ImportRadioIDFileToolStripMenuItem.Name = "ImportRadioIDFileToolStripMenuItem"
         Me.ImportRadioIDFileToolStripMenuItem.Size = New System.Drawing.Size(200, 22)
         Me.ImportRadioIDFileToolStripMenuItem.Text = "Import Radio ID File"
+        '
+        'SaveRecordsToolStripMenuItem
+        '
+        Me.SaveRecordsToolStripMenuItem.Name = "SaveRecordsToolStripMenuItem"
+        Me.SaveRecordsToolStripMenuItem.Size = New System.Drawing.Size(200, 22)
+        Me.SaveRecordsToolStripMenuItem.Text = "Save Records"
+        '
+        'SaveRecordsAsToolStripMenuItem
+        '
+        Me.SaveRecordsAsToolStripMenuItem.Name = "SaveRecordsAsToolStripMenuItem"
+        Me.SaveRecordsAsToolStripMenuItem.Size = New System.Drawing.Size(200, 22)
+        Me.SaveRecordsAsToolStripMenuItem.Text = "Save Records As"
         '
         'ExportCallListToolStripMenuItem
         '
@@ -394,7 +408,7 @@ Partial Class RadioCallListManager
         Me.ToolStripSave.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.ToolStripSave.Name = "ToolStripSave"
         Me.ToolStripSave.Size = New System.Drawing.Size(80, 51)
-        Me.ToolStripSave.Text = "Save Settings"
+        Me.ToolStripSave.Text = "Save Records"
         Me.ToolStripSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
         '
         'ToolStripSeparator3
@@ -1071,7 +1085,7 @@ Partial Class RadioCallListManager
         Me.lblLengthValue.Text = "0"
         Me.lblLengthValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'RadioCallListManager
+        'frmRadioCallListManager
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -1080,7 +1094,7 @@ Partial Class RadioCallListManager
         Me.Controls.Add(Me.ToolStrip1)
         Me.Controls.Add(Me.MenuStrip1)
         Me.MainMenuStrip = Me.MenuStrip1
-        Me.Name = "RadioCallListManager"
+        Me.Name = "frmRadioCallListManager"
         Me.Text = "Radio Call List Manager"
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
@@ -1215,4 +1229,6 @@ Partial Class RadioCallListManager
     Friend WithEvents tsslSysID As ToolStripStatusLabel
     Friend WithEvents ToolStripStatusLabel3 As ToolStripStatusLabel
     Friend WithEvents tsslSysName As ToolStripStatusLabel
+    Friend WithEvents SaveRecordsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents SaveRecordsAsToolStripMenuItem As ToolStripMenuItem
 End Class

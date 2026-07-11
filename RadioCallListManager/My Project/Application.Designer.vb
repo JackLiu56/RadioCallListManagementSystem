@@ -32,7 +32,7 @@ Namespace My
 
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()> _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.RadioCallListManager.RadioCallListManager
+            Me.MainForm = Global.RadioCallListManager.frmRadioCallListManager
         End Sub
     End Class
 End Namespace

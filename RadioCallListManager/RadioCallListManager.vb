@@ -4,7 +4,7 @@ Imports System.Text
 Imports System.Xml.Linq
 Imports System.Linq
 
-Public Class RadioCallListManager
+Public Class frmRadioCallListManager
     Private savedRadioID As String
     Private savedCallsign As String
     Private savedIP As String
@@ -14,6 +14,10 @@ Public Class RadioCallListManager
     Private isEditMode As Boolean = False
     Private lastSearchText As String = ""
     Private lastFoundRowIndex As Integer = -1
+    Private currentImportFilePath As String = ""
+    Private hasUnsavedChanges As Boolean = False
+    Private isAddingNewRecord As Boolean = False
+    Private editingRow As DataGridViewRow = Nothing
 
     Private Const DefaultWacnID As String = "DEE00"
     Private Const DefaultSystemID As String = "13B"
@@ -53,10 +57,10 @@ Public Class RadioCallListManager
 
         tscbTargetFormat.Items.AddRange(
         New Object() {
-            "EF Johnson",
+            "EF Johnson (Not Support yet)",
             "Motorola APX",
             "Motorola XTS",
-            "Harris RPM"
+            "Harris RPM (Not Support yet)"
         }
     )
 
@@ -90,6 +94,31 @@ Public Class RadioCallListManager
 
         ExportCallListToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Shift Or Keys.E
         ExportCallListToolStripMenuItem.ShowShortcutKeys = True
+
+        SaveRecordsToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.S
+        SaveRecordsToolStripMenuItem.ShowShortcutKeys = True
+
+        SaveRecordsAsToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Shift Or Keys.S
+        SaveRecordsAsToolStripMenuItem.ShowShortcutKeys = True
+
+    End Sub
+
+    Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+
+        If Not hasUnsavedChanges Then Return
+
+        Dim result As DialogResult =
+        MessageBox.Show(
+            "There are unsaved contact changes. Close without saving?",
+            "Unsaved Changes",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Warning,
+            MessageBoxDefaultButton.Button2
+        )
+
+        If result <> DialogResult.Yes Then
+            e.Cancel = True
+        End If
 
     End Sub
 
@@ -640,10 +669,10 @@ Public Class RadioCallListManager
                 'Save XML other info on temp Tag
                 row.Tag =
                 New RadioXmlMetadata With {
-                    .systemName = systemName,
+                    .SystemName = systemName,
                     .WacnID = wacnHex,
                     .SystemID = systemIDHex,
-                    .referenceKey = referenceKey
+                    .ReferenceKey = referenceKey
                 }
 
                 importedCount += 1
@@ -713,6 +742,9 @@ Public Class RadioCallListManager
                         txtNotes.ForeColor = Color.Firebrick
                         Return
                 End Select
+
+                currentImportFilePath = dialog.FileName
+                Me.Text = "Radio Call List Manager" + " (" + currentImportFilePath + ")"
 
                 txtNotes.Text = dgvContacts.Rows.Count.ToString() + " radio records imported successfully." + "Import Complete"
 
@@ -800,6 +832,9 @@ Public Class RadioCallListManager
             Return
         End If
 
+        isAddingNewRecord = False
+        editingRow = dgvContacts.CurrentRow
+
         SetRecordEditMode(True)
 
         txtRadioID.Focus()
@@ -807,45 +842,100 @@ Public Class RadioCallListManager
     End Sub
 
     Private Sub btnReset_Click(sender As Object, e As EventArgs) Handles btnReset.Click
-        txtRadioID.Text = savedRadioID
-        txtCallSign.Text = savedCallsign
-        txtIP.Text = savedIP
-        txtMDTIP.Text = savedMDTIP
-        txtRadioUser.Text = savedRadioUser
-        txtGroupID.Text = savedGroupID
-
-        'Exit Edit mode
-        SetRecordEditMode(False)
-
-        'Display back the previous saved data
-        ShowSelectedRecordDetails()
-
-        EditSelectedRecordToolStripMenuItem.Enabled = True
-    End Sub
-
-    Private Sub btnApplyChanges_Click(sender As Object, e As EventArgs) Handles btnApplyChanges.Click
-        'if not on Edit Mode, display on Notes
         If Not isEditMode Then
 
             txtNotes.Text =
-            "Please click Edit Selected Record before applying changes."
+            "Reset is only available while editing or adding a record."
 
             txtNotes.ForeColor = Color.DarkOrange
             Return
 
         End If
 
-        If dgvContacts.CurrentRow Is Nothing Then
+        Dim wasAddingNewRecord As Boolean =
+        isAddingNewRecord
+
+        isAddingNewRecord = False
+        editingRow = Nothing
+
+        SetRecordEditMode(False)
+
+        If wasAddingNewRecord Then
+
+            ClearRecordEntryFields()
+
+            If dgvContacts.Rows.Count > 0 Then
+
+                dgvContacts.Rows(0).Selected = True
+                dgvContacts.CurrentCell =
+                dgvContacts.Rows(0).
+                Cells("colRadioID")
+
+                ShowSelectedRecordDetails()
+
+            End If
 
             txtNotes.Text =
-            "No record is currently selected."
+            "The new record was discarded."
 
-            txtNotes.ForeColor = Color.Firebrick
+        Else
+
+            ShowSelectedRecordDetails()
+
+            txtNotes.Text =
+            "Unsaved changes were discarded."
+
+        End If
+
+        txtNotes.ForeColor = Color.DimGray
+
+        EditSelectedRecordToolStripMenuItem.Enabled = True
+    End Sub
+
+    Private Function IsDuplicateRadioID(radioID As String, currentRow As DataGridViewRow) As Boolean
+
+        For Each row As DataGridViewRow In dgvContacts.Rows
+
+            If row.IsNewRow Then Continue For
+
+            'Not compare to self
+            If row Is currentRow Then Continue For
+
+            Dim existingID As String =
+            Convert.ToString(
+                row.Cells("colRadioID").Value
+            ).Trim()
+
+            If existingID.Equals(
+            radioID,
+            StringComparison.OrdinalIgnoreCase
+        ) Then
+
+                Return True
+
+            End If
+
+        Next
+
+        Return False
+
+    End Function
+
+    Private Sub btnApplyChanges_Click(sender As Object, e As EventArgs) Handles btnApplyChanges.Click
+        If Not isEditMode Then
+
+            txtNotes.Text =
+            "Please enter Edit Mode before applying changes."
+
+            txtNotes.ForeColor = Color.DarkOrange
             Return
 
         End If
 
-        If String.IsNullOrWhiteSpace(txtRadioID.Text) Then
+        Dim radioID As String =
+        txtRadioID.Text.Trim()
+
+        If radioID = "" Then
 
             txtNotes.Text =
             "Radio ID is required."
@@ -856,8 +946,7 @@ Public Class RadioCallListManager
 
         End If
 
-        If Not txtRadioID.Text.Trim().
-        All(AddressOf Char.IsDigit) Then
+        If Not radioID.All(AddressOf Char.IsDigit) Then
 
             txtNotes.Text =
             "Radio ID must contain numbers only."
@@ -869,32 +958,97 @@ Public Class RadioCallListManager
 
         End If
 
-        Dim selectedRow As DataGridViewRow =
-        dgvContacts.CurrentRow
+        Dim targetRow As DataGridViewRow
 
-        selectedRow.Cells("colRadioID").Value =
-        txtRadioID.Text.Trim()
+        If isAddingNewRecord Then
 
-        selectedRow.Cells("colCallsign").Value =
+            If IsDuplicateRadioID(radioID, Nothing) Then
+
+                txtNotes.Text =
+                "Radio ID " & radioID & " already exists."
+
+                txtNotes.ForeColor = Color.Firebrick
+                Return
+
+            End If
+
+            Dim newRowIndex As Integer =
+            dgvContacts.Rows.Add()
+
+            targetRow =
+            dgvContacts.Rows(newRowIndex)
+
+        Else
+
+            If editingRow Is Nothing Then
+
+                txtNotes.Text =
+                "The selected record is no longer available."
+
+                txtNotes.ForeColor = Color.Firebrick
+                Return
+
+            End If
+
+            If IsDuplicateRadioID(radioID, editingRow) Then
+
+                txtNotes.Text =
+                "Radio ID " & radioID & " already exists."
+
+                txtNotes.ForeColor = Color.Firebrick
+                Return
+
+            End If
+
+            targetRow = editingRow
+
+        End If
+
+        targetRow.Cells("colRadioID").Value =
+        radioID
+
+        targetRow.Cells("colCallsign").Value =
         txtCallSign.Text.Trim()
 
-        selectedRow.Cells("colIP").Value =
+        targetRow.Cells("colIP").Value =
         txtIP.Text.Trim()
 
-        selectedRow.Cells("colMDTIP").Value =
+        targetRow.Cells("colMDTIP").Value =
         txtMDTIP.Text.Trim()
 
-        selectedRow.Cells("colRadioUser").Value =
+        targetRow.Cells("colRadioUser").Value =
         txtRadioUser.Text.Trim()
 
-        selectedRow.Cells("colGroupID").Value =
+        targetRow.Cells("colGroupID").Value =
         txtGroupID.Text.Trim()
 
+        Dim recordWasAdded As Boolean =
+        isAddingNewRecord
+
+        isAddingNewRecord = False
+        editingRow = Nothing
+        hasUnsavedChanges = True
+
         SetRecordEditMode(False)
+
+        dgvContacts.ClearSelection()
+        targetRow.Selected = True
+        dgvContacts.CurrentCell =
+        targetRow.Cells("colRadioID")
+
         ShowSelectedRecordDetails()
 
-        txtNotes.Text =
-        "Changes applied successfully. The record must be validated again."
+        If recordWasAdded Then
+
+            txtNotes.Text =
+            "The new record was added successfully."
+
+        Else
+
+            txtNotes.Text =
+            "Changes were applied successfully."
+
+        End If
 
         txtNotes.ForeColor = Color.SeaGreen
 
@@ -1812,5 +1966,333 @@ Public Class RadioCallListManager
 
     Private Sub ExportCallListToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExportCallListToolStripMenuItem.Click
         ToolStripExport_Click(sender, e)
+    End Sub
+
+    Private Sub RefreshImportedFile()
+
+        Try
+
+            Dim extension As String =
+            System.IO.Path.GetExtension(
+                currentImportFilePath
+            ).ToLowerInvariant()
+
+            Select Case extension
+
+                Case ".csv"
+                    ImportContactsCsv(currentImportFilePath)
+
+                Case ".xml"
+                    ImportUnifiedCallListXml(currentImportFilePath)
+
+                Case Else
+
+                    txtNotes.Text =
+                    "The current file type is not supported: " &
+                    extension
+
+                    txtNotes.ForeColor = Color.Firebrick
+                    Return
+
+            End Select
+
+            txtNotes.Text =
+            "Records refreshed successfully." &
+            Environment.NewLine &
+            "Source: " &
+            currentImportFilePath &
+            Environment.NewLine &
+            "Records loaded: " &
+            dgvContacts.Rows.Count.ToString()
+
+            txtNotes.ForeColor = Color.SeaGreen
+
+        Catch ex As Exception
+
+            txtNotes.Text =
+            "Refresh failed." &
+            Environment.NewLine &
+            ex.Message
+
+            txtNotes.ForeColor = Color.Firebrick
+
+        End Try
+
+    End Sub
+
+    Private Sub ToolStripRefresh_Click(sender As Object, e As EventArgs) Handles ToolStripRefresh.Click
+        If isEditMode Then
+
+            txtNotes.Text =
+                "Please apply or reset the current changes before refreshing."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return
+
+        End If
+
+        If String.IsNullOrWhiteSpace(currentImportFilePath) Then
+
+            txtNotes.Text =
+                "No source file has been imported yet."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return
+
+        End If
+
+        If Not System.IO.File.Exists(currentImportFilePath) Then
+
+            txtNotes.Text =
+                "The original source file could not be found:" &
+                Environment.NewLine &
+                currentImportFilePath
+
+            txtNotes.ForeColor = Color.Firebrick
+            Return
+
+        End If
+
+        Dim result As DialogResult =
+            MessageBox.Show(
+                "Refreshing will reload the original file and discard unsaved changes in the table." &
+                Environment.NewLine &
+                Environment.NewLine &
+                "Continue?",
+                "Refresh Records",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2
+            )
+
+        If result <> DialogResult.Yes Then
+
+            txtNotes.Text = "Refresh cancelled."
+            txtNotes.ForeColor = Color.DimGray
+            Return
+
+        End If
+
+        RefreshImportedFile()
+    End Sub
+
+    Private Sub RefreshToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RefreshToolStripMenuItem.Click
+        ToolStripRefresh_Click(sender, e)
+    End Sub
+
+    Private Sub SaveContactsAsCsv()
+
+        Using dialog As New SaveFileDialog()
+
+            dialog.Title = "Save Contact Records"
+
+            dialog.Filter =
+            "CSV Files (*.csv)|*.csv"
+
+            dialog.DefaultExt = "csv"
+            dialog.AddExtension = True
+            dialog.OverwritePrompt = True
+
+            dialog.FileName =
+            "Radio_Contacts_" &
+            DateTime.Now.ToString("yyyyMMdd_HHmmss") &
+            ".csv"
+
+            If dialog.ShowDialog() <> DialogResult.OK Then
+
+                txtNotes.Text =
+                "Save operation cancelled."
+
+                txtNotes.ForeColor = Color.DimGray
+                Return
+
+            End If
+
+            SaveContactsToCsv(dialog.FileName)
+
+            currentImportFilePath = dialog.FileName
+            Me.Text = "Radio Call List Manager" + " (" + currentImportFilePath + ")"
+
+        End Using
+
+    End Sub
+
+    Private Sub SaveContactsToCsv(filePath As String)
+
+        Try
+
+            Using writer As New StreamWriter(
+            filePath,
+            False,
+            New UTF8Encoding(True)
+        )
+
+                WriteCsvRow(
+                writer,
+                "RADIO ID (DEC)",
+                "Callsign [P90]",
+                "IP",
+                "MDT IP",
+                "RADIO USER",
+                "Group ID"
+            )
+
+                For Each row As DataGridViewRow In dgvContacts.Rows
+
+                    If row.IsNewRow Then Continue For
+
+                    WriteCsvRow(
+                    writer,
+                    GetGridCellText(row, "colRadioID"),
+                    GetGridCellText(row, "colCallsign"),
+                    GetGridCellText(row, "colIP"),
+                    GetGridCellText(row, "colMDTIP"),
+                    GetGridCellText(row, "colRadioUser"),
+                    GetGridCellText(row, "colGroupID")
+                )
+
+                Next
+
+            End Using
+
+            hasUnsavedChanges = False
+
+            txtNotes.Text =
+            "Contact records saved successfully." &
+            Environment.NewLine &
+            "Records saved: " &
+            dgvContacts.Rows.Count.ToString() &
+            Environment.NewLine &
+            "File: " &
+            filePath
+
+            txtNotes.ForeColor = Color.SeaGreen
+
+        Catch ex As Exception
+
+            txtNotes.Text =
+            "The contact file could not be saved." &
+            Environment.NewLine &
+            ex.Message
+
+            txtNotes.ForeColor = Color.Firebrick
+
+        End Try
+
+    End Sub
+
+    Private Sub ToolStripSave_Click(sender As Object, e As EventArgs) Handles ToolStripSave.Click
+        If isEditMode Then
+
+            txtNotes.Text =
+                "Please apply or reset the current changes before saving."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return
+
+        End If
+
+        If dgvContacts.Rows.Count = 0 Then
+
+            txtNotes.Text =
+                "There are no contact records to save."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return
+
+        End If
+
+        If String.IsNullOrWhiteSpace(currentImportFilePath) Then
+
+            SaveContactsAsCsv()
+            Return
+
+        End If
+
+        Dim extension As String =
+            System.IO.Path.GetExtension(
+                currentImportFilePath
+            ).ToLowerInvariant()
+
+        Select Case extension
+
+            Case ".csv"
+                SaveContactsToCsv(currentImportFilePath)
+
+            Case ".xml"
+                txtNotes.Text =
+                    "The imported file is XML. Please save the edited records as a new CSV file."
+
+                txtNotes.ForeColor = Color.DarkOrange
+
+                SaveContactsAsCsv()
+
+            Case Else
+                SaveContactsAsCsv()
+
+        End Select
+    End Sub
+
+    Private Sub SaveRecordsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveRecordsToolStripMenuItem.Click
+        ToolStripSave_Click(sender, e)
+    End Sub
+
+    Private Sub SaveRecordsAsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveRecordsAsToolStripMenuItem.Click
+        If isEditMode Then
+            txtNotes.Text =
+                "Please apply or reset the current changes before saving."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return
+        End If
+
+        If dgvContacts.Rows.Count = 0 Then
+            txtNotes.Text =
+                "There are no contact records to save."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return
+        End If
+
+        SaveContactsAsCsv()
+    End Sub
+
+    Private Sub ClearRecordEntryFields()
+
+        txtRadioID.Clear()
+        txtCallSign.Clear()
+        txtIP.Clear()
+        txtMDTIP.Clear()
+        txtRadioUser.Clear()
+        txtGroupID.Clear()
+
+    End Sub
+
+    Private Sub AddNewRecordToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AddNewRecordToolStripMenuItem.Click
+        If isEditMode Then
+
+            txtNotes.Text =
+            "Please apply or reset the current changes before adding a new record."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return
+
+        End If
+
+        isAddingNewRecord = True
+        editingRow = Nothing
+
+        SetRecordEditMode(True)
+
+        dgvContacts.ClearSelection()
+
+        ClearRecordEntryFields()
+
+        txtRadioID.Focus()
+
+        txtNotes.Text =
+        "Enter the new record details, then click Apply Changes."
+
+        txtNotes.ForeColor = Color.RoyalBlue
     End Sub
 End Class
