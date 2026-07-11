@@ -88,20 +88,7 @@ Partial Class frmRadioCallListManager
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grpExportLog = New System.Windows.Forms.GroupBox()
-        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
-        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.tsslWacnID = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.ToolStripStatusLabel2 = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.tsslSysID = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.ToolStripStatusLabel3 = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.tsslSysName = New System.Windows.Forms.ToolStripStatusLabel()
         Me.dgvExportLog = New System.Windows.Forms.DataGridView()
-        Me.colExportTime = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportFile = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportFormat = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportRecords = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportStatus = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportMessage = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.grpRecordDetails = New System.Windows.Forms.GroupBox()
         Me.btnReset = New System.Windows.Forms.Button()
         Me.btnApplyChanges = New System.Windows.Forms.Button()
@@ -134,6 +121,19 @@ Partial Class frmRadioCallListManager
         Me.lblDuplicatesValue = New System.Windows.Forms.Label()
         Me.lblMissingValue = New System.Windows.Forms.Label()
         Me.lblLengthValue = New System.Windows.Forms.Label()
+        Me.colExportTime = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportFile = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportFormat = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportRecords = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportStatus = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportMessage = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.tsslWacnID = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripStatusLabel2 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.tsslSysID = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripStatusLabel3 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.tsslSysName = New System.Windows.Forms.ToolStripStatusLabel()
         Me.MenuStrip1.SuspendLayout()
         Me.ToolStrip1.SuspendLayout()
         CType(Me.dgvContacts, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -147,12 +147,12 @@ Partial Class frmRadioCallListManager
         Me.SplitContainer2.Panel2.SuspendLayout()
         Me.SplitContainer2.SuspendLayout()
         Me.grpExportLog.SuspendLayout()
-        Me.StatusStrip1.SuspendLayout()
         CType(Me.dgvExportLog, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpRecordDetails.SuspendLayout()
         Me.tblRecordDetails.SuspendLayout()
         Me.grpValidationSummary.SuspendLayout()
         Me.tblValidationSummary.SuspendLayout()
+        Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
@@ -502,7 +502,7 @@ Partial Class frmRadioCallListManager
         Me.dgvContacts.Name = "dgvContacts"
         Me.dgvContacts.ReadOnly = True
         Me.dgvContacts.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvContacts.Size = New System.Drawing.Size(696, 383)
+        Me.dgvContacts.Size = New System.Drawing.Size(696, 392)
         Me.dgvContacts.TabIndex = 2
         '
         'colRadioID
@@ -579,7 +579,7 @@ Partial Class frmRadioCallListManager
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.grpRecordDetails)
         Me.SplitContainer1.Panel2.Controls.Add(Me.grpValidationSummary)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1230, 593)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1230, 608)
         Me.SplitContainer1.SplitterDistance = 696
         Me.SplitContainer1.TabIndex = 3
         '
@@ -598,74 +598,26 @@ Partial Class frmRadioCallListManager
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grpExportLog)
-        Me.SplitContainer2.Size = New System.Drawing.Size(696, 593)
-        Me.SplitContainer2.SplitterDistance = 383
+        Me.SplitContainer2.Size = New System.Drawing.Size(696, 608)
+        Me.SplitContainer2.SplitterDistance = 392
         Me.SplitContainer2.TabIndex = 4
         '
         'grpExportLog
         '
-        Me.grpExportLog.Controls.Add(Me.StatusStrip1)
         Me.grpExportLog.Controls.Add(Me.dgvExportLog)
         Me.grpExportLog.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpExportLog.Location = New System.Drawing.Point(0, 0)
         Me.grpExportLog.Name = "grpExportLog"
-        Me.grpExportLog.Size = New System.Drawing.Size(696, 206)
+        Me.grpExportLog.Size = New System.Drawing.Size(696, 212)
         Me.grpExportLog.TabIndex = 0
         Me.grpExportLog.TabStop = False
         Me.grpExportLog.Text = "Export Log"
-        '
-        'StatusStrip1
-        '
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.tsslWacnID, Me.ToolStripStatusLabel2, Me.tsslSysID, Me.ToolStripStatusLabel3, Me.tsslSysName})
-        Me.StatusStrip1.Location = New System.Drawing.Point(3, 181)
-        Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.Size = New System.Drawing.Size(690, 22)
-        Me.StatusStrip1.TabIndex = 1
-        Me.StatusStrip1.Text = "StatusStrip1"
-        '
-        'ToolStripStatusLabel1
-        '
-        Me.ToolStripStatusLabel1.ForeColor = System.Drawing.SystemColors.ControlDarkDark
-        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
-        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(51, 17)
-        Me.ToolStripStatusLabel1.Text = "Wacn ID"
-        '
-        'tsslWacnID
-        '
-        Me.tsslWacnID.Name = "tsslWacnID"
-        Me.tsslWacnID.Size = New System.Drawing.Size(48, 17)
-        Me.tsslWacnID.Text = "WacnID"
-        '
-        'ToolStripStatusLabel2
-        '
-        Me.ToolStripStatusLabel2.ForeColor = System.Drawing.SystemColors.ControlDarkDark
-        Me.ToolStripStatusLabel2.Name = "ToolStripStatusLabel2"
-        Me.ToolStripStatusLabel2.Size = New System.Drawing.Size(59, 17)
-        Me.ToolStripStatusLabel2.Text = "System ID"
-        '
-        'tsslSysID
-        '
-        Me.tsslSysID.Name = "tsslSysID"
-        Me.tsslSysID.Size = New System.Drawing.Size(35, 17)
-        Me.tsslSysID.Text = "SysID"
-        '
-        'ToolStripStatusLabel3
-        '
-        Me.ToolStripStatusLabel3.ForeColor = System.Drawing.SystemColors.ControlDarkDark
-        Me.ToolStripStatusLabel3.Name = "ToolStripStatusLabel3"
-        Me.ToolStripStatusLabel3.Size = New System.Drawing.Size(80, 17)
-        Me.ToolStripStatusLabel3.Text = "System Name"
-        '
-        'tsslSysName
-        '
-        Me.tsslSysName.Name = "tsslSysName"
-        Me.tsslSysName.Size = New System.Drawing.Size(56, 17)
-        Me.tsslSysName.Text = "SysName"
         '
         'dgvExportLog
         '
         Me.dgvExportLog.AllowUserToAddRows = False
         Me.dgvExportLog.AllowUserToDeleteRows = False
+        Me.dgvExportLog.BackgroundColor = System.Drawing.SystemColors.ControlLightLight
         Me.dgvExportLog.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgvExportLog.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.colExportTime, Me.colExportFile, Me.colExportFormat, Me.colExportRecords, Me.colExportStatus, Me.colExportMessage})
         Me.dgvExportLog.Dock = System.Windows.Forms.DockStyle.Fill
@@ -675,49 +627,8 @@ Partial Class frmRadioCallListManager
         Me.dgvExportLog.ReadOnly = True
         Me.dgvExportLog.RowHeadersVisible = False
         Me.dgvExportLog.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvExportLog.Size = New System.Drawing.Size(690, 187)
+        Me.dgvExportLog.Size = New System.Drawing.Size(690, 193)
         Me.dgvExportLog.TabIndex = 0
-        '
-        'colExportTime
-        '
-        Me.colExportTime.HeaderText = "Time"
-        Me.colExportTime.Name = "colExportTime"
-        Me.colExportTime.ReadOnly = True
-        Me.colExportTime.Width = 145
-        '
-        'colExportFile
-        '
-        Me.colExportFile.HeaderText = "File Name"
-        Me.colExportFile.Name = "colExportFile"
-        Me.colExportFile.ReadOnly = True
-        Me.colExportFile.Width = 180
-        '
-        'colExportFormat
-        '
-        Me.colExportFormat.HeaderText = "Format"
-        Me.colExportFormat.Name = "colExportFormat"
-        Me.colExportFormat.ReadOnly = True
-        '
-        'colExportRecords
-        '
-        Me.colExportRecords.HeaderText = "Records"
-        Me.colExportRecords.Name = "colExportRecords"
-        Me.colExportRecords.ReadOnly = True
-        Me.colExportRecords.Width = 70
-        '
-        'colExportStatus
-        '
-        Me.colExportStatus.HeaderText = "Status"
-        Me.colExportStatus.Name = "colExportStatus"
-        Me.colExportStatus.ReadOnly = True
-        Me.colExportStatus.Width = 80
-        '
-        'colExportMessage
-        '
-        Me.colExportMessage.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
-        Me.colExportMessage.HeaderText = "Message / Output Path"
-        Me.colExportMessage.Name = "colExportMessage"
-        Me.colExportMessage.ReadOnly = True
         '
         'grpRecordDetails
         '
@@ -727,7 +638,7 @@ Partial Class frmRadioCallListManager
         Me.grpRecordDetails.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpRecordDetails.Location = New System.Drawing.Point(0, 240)
         Me.grpRecordDetails.Name = "grpRecordDetails"
-        Me.grpRecordDetails.Size = New System.Drawing.Size(530, 353)
+        Me.grpRecordDetails.Size = New System.Drawing.Size(530, 368)
         Me.grpRecordDetails.TabIndex = 1
         Me.grpRecordDetails.TabStop = False
         Me.grpRecordDetails.Text = "Selected Record Details"
@@ -737,7 +648,7 @@ Partial Class frmRadioCallListManager
         Me.btnReset.Dock = System.Windows.Forms.DockStyle.Right
         Me.btnReset.Location = New System.Drawing.Point(367, 312)
         Me.btnReset.Name = "btnReset"
-        Me.btnReset.Size = New System.Drawing.Size(160, 38)
+        Me.btnReset.Size = New System.Drawing.Size(160, 53)
         Me.btnReset.TabIndex = 2
         Me.btnReset.Text = "Reset"
         Me.btnReset.UseVisualStyleBackColor = True
@@ -747,7 +658,7 @@ Partial Class frmRadioCallListManager
         Me.btnApplyChanges.Dock = System.Windows.Forms.DockStyle.Left
         Me.btnApplyChanges.Location = New System.Drawing.Point(3, 312)
         Me.btnApplyChanges.Name = "btnApplyChanges"
-        Me.btnApplyChanges.Size = New System.Drawing.Size(160, 38)
+        Me.btnApplyChanges.Size = New System.Drawing.Size(160, 53)
         Me.btnApplyChanges.TabIndex = 1
         Me.btnApplyChanges.Text = "Apply Changes"
         Me.btnApplyChanges.UseVisualStyleBackColor = True
@@ -1116,14 +1027,104 @@ Partial Class frmRadioCallListManager
         Me.lblLengthValue.Text = "0"
         Me.lblLengthValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
+        'colExportTime
+        '
+        Me.colExportTime.HeaderText = "Time"
+        Me.colExportTime.Name = "colExportTime"
+        Me.colExportTime.ReadOnly = True
+        Me.colExportTime.Width = 145
+        '
+        'colExportFile
+        '
+        Me.colExportFile.HeaderText = "File Name"
+        Me.colExportFile.Name = "colExportFile"
+        Me.colExportFile.ReadOnly = True
+        Me.colExportFile.Width = 180
+        '
+        'colExportFormat
+        '
+        Me.colExportFormat.HeaderText = "Format"
+        Me.colExportFormat.Name = "colExportFormat"
+        Me.colExportFormat.ReadOnly = True
+        '
+        'colExportRecords
+        '
+        Me.colExportRecords.HeaderText = "Records"
+        Me.colExportRecords.Name = "colExportRecords"
+        Me.colExportRecords.ReadOnly = True
+        Me.colExportRecords.Width = 70
+        '
+        'colExportStatus
+        '
+        Me.colExportStatus.HeaderText = "Status"
+        Me.colExportStatus.Name = "colExportStatus"
+        Me.colExportStatus.ReadOnly = True
+        Me.colExportStatus.Width = 80
+        '
+        'colExportMessage
+        '
+        Me.colExportMessage.HeaderText = "Message / Output Path"
+        Me.colExportMessage.Name = "colExportMessage"
+        Me.colExportMessage.ReadOnly = True
+        Me.colExportMessage.Width = 500
+        '
+        'StatusStrip1
+        '
+        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.tsslWacnID, Me.ToolStripStatusLabel2, Me.tsslSysID, Me.ToolStripStatusLabel3, Me.tsslSysName})
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 686)
+        Me.StatusStrip1.Name = "StatusStrip1"
+        Me.StatusStrip1.Size = New System.Drawing.Size(1230, 22)
+        Me.StatusStrip1.TabIndex = 4
+        Me.StatusStrip1.Text = "StatusStrip1"
+        '
+        'ToolStripStatusLabel1
+        '
+        Me.ToolStripStatusLabel1.ForeColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
+        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(51, 17)
+        Me.ToolStripStatusLabel1.Text = "Wacn ID"
+        '
+        'tsslWacnID
+        '
+        Me.tsslWacnID.Name = "tsslWacnID"
+        Me.tsslWacnID.Size = New System.Drawing.Size(48, 17)
+        Me.tsslWacnID.Text = "WacnID"
+        '
+        'ToolStripStatusLabel2
+        '
+        Me.ToolStripStatusLabel2.ForeColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ToolStripStatusLabel2.Name = "ToolStripStatusLabel2"
+        Me.ToolStripStatusLabel2.Size = New System.Drawing.Size(59, 17)
+        Me.ToolStripStatusLabel2.Text = "System ID"
+        '
+        'tsslSysID
+        '
+        Me.tsslSysID.Name = "tsslSysID"
+        Me.tsslSysID.Size = New System.Drawing.Size(35, 17)
+        Me.tsslSysID.Text = "SysID"
+        '
+        'ToolStripStatusLabel3
+        '
+        Me.ToolStripStatusLabel3.ForeColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ToolStripStatusLabel3.Name = "ToolStripStatusLabel3"
+        Me.ToolStripStatusLabel3.Size = New System.Drawing.Size(80, 17)
+        Me.ToolStripStatusLabel3.Text = "System Name"
+        '
+        'tsslSysName
+        '
+        Me.tsslSysName.Name = "tsslSysName"
+        Me.tsslSysName.Size = New System.Drawing.Size(56, 17)
+        Me.tsslSysName.Text = "SysName"
+        '
         'frmRadioCallListManager
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1230, 671)
+        Me.ClientSize = New System.Drawing.Size(1230, 708)
         Me.Controls.Add(Me.SplitContainer1)
         Me.Controls.Add(Me.ToolStrip1)
         Me.Controls.Add(Me.MenuStrip1)
+        Me.Controls.Add(Me.StatusStrip1)
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Name = "frmRadioCallListManager"
         Me.Text = "Radio Call List Manager"
@@ -1142,9 +1143,6 @@ Partial Class frmRadioCallListManager
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer2.ResumeLayout(False)
         Me.grpExportLog.ResumeLayout(False)
-        Me.grpExportLog.PerformLayout()
-        Me.StatusStrip1.ResumeLayout(False)
-        Me.StatusStrip1.PerformLayout()
         CType(Me.dgvExportLog, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpRecordDetails.ResumeLayout(False)
         Me.tblRecordDetails.ResumeLayout(False)
@@ -1152,6 +1150,8 @@ Partial Class frmRadioCallListManager
         Me.grpValidationSummary.ResumeLayout(False)
         Me.tblValidationSummary.ResumeLayout(False)
         Me.tblValidationSummary.PerformLayout()
+        Me.StatusStrip1.ResumeLayout(False)
+        Me.StatusStrip1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1231,12 +1231,6 @@ Partial Class frmRadioCallListManager
     Friend WithEvents txtGroupID As TextBox
     Friend WithEvents grpExportLog As GroupBox
     Friend WithEvents dgvExportLog As DataGridView
-    Friend WithEvents colExportTime As DataGridViewTextBoxColumn
-    Friend WithEvents colExportFile As DataGridViewTextBoxColumn
-    Friend WithEvents colExportFormat As DataGridViewTextBoxColumn
-    Friend WithEvents colExportRecords As DataGridViewTextBoxColumn
-    Friend WithEvents colExportStatus As DataGridViewTextBoxColumn
-    Friend WithEvents colExportMessage As DataGridViewTextBoxColumn
     Friend WithEvents lblNotes As Label
     Friend WithEvents txtNotes As TextBox
     Friend WithEvents btnReset As Button
@@ -1254,6 +1248,18 @@ Partial Class frmRadioCallListManager
     Friend WithEvents colRadioUser As DataGridViewTextBoxColumn
     Friend WithEvents colGroupID As DataGridViewTextBoxColumn
     Friend WithEvents ResetToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents SaveRecordsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents SaveRecordsAsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents cmsContacts As ContextMenuStrip
+    Friend WithEvents EditSelectedRecordToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents DeleteSelectedRecordToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents AddSelectedRecordToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents colExportTime As DataGridViewTextBoxColumn
+    Friend WithEvents colExportFile As DataGridViewTextBoxColumn
+    Friend WithEvents colExportFormat As DataGridViewTextBoxColumn
+    Friend WithEvents colExportRecords As DataGridViewTextBoxColumn
+    Friend WithEvents colExportStatus As DataGridViewTextBoxColumn
+    Friend WithEvents colExportMessage As DataGridViewTextBoxColumn
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
     Friend WithEvents tsslWacnID As ToolStripStatusLabel
@@ -1261,10 +1267,4 @@ Partial Class frmRadioCallListManager
     Friend WithEvents tsslSysID As ToolStripStatusLabel
     Friend WithEvents ToolStripStatusLabel3 As ToolStripStatusLabel
     Friend WithEvents tsslSysName As ToolStripStatusLabel
-    Friend WithEvents SaveRecordsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents SaveRecordsAsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents cmsContacts As ContextMenuStrip
-    Friend WithEvents EditSelectedRecordToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents DeleteSelectedRecordToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents AddSelectedRecordToolStripMenuItem As ToolStripMenuItem
 End Class

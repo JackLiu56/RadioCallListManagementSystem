@@ -43,6 +43,57 @@ Public Class frmRadioCallListManager
 
     End Class
 
+    Private Sub AddExportLog(
+    targetFormat As String,
+    aliasLength As Integer,
+    idLength As Integer,
+    recordCount As Integer,
+    status As String,
+    filePath As String,
+    message As String
+)
+
+        Dim fileName As String = ""
+
+        If Not String.IsNullOrWhiteSpace(filePath) Then
+            fileName =
+            System.IO.Path.GetFileName(filePath)
+        End If
+
+        Dim rowIndex As Integer =
+            dgvExportLog.Rows.Add(
+            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+            fileName,
+            targetFormat,
+            recordCount.ToString(),
+            status,
+            message
+        )
+
+        Dim logRow As DataGridViewRow =
+        dgvExportLog.Rows(rowIndex)
+
+        Select Case status.Trim().ToLowerInvariant()
+
+            Case "success"
+
+                logRow.DefaultCellStyle.BackColor =
+                Color.Honeydew
+
+            Case "failed"
+
+                logRow.DefaultCellStyle.BackColor =
+                Color.MistyRose
+
+            Case "cancelled"
+
+                logRow.DefaultCellStyle.BackColor =
+                Color.LemonChiffon
+
+        End Select
+
+    End Sub
+
     Private Sub tblValidationSummary_Paint(sender As Object, e As PaintEventArgs) Handles tblValidationSummary.Paint
         lblTotalValue.ForeColor = Color.RoyalBlue
         lblValidValue.ForeColor = Color.SeaGreen
@@ -1588,12 +1639,41 @@ Public Class frmRadioCallListManager
         "File: " &
         filePath
 
+        AddExportLog(
+        targetFormat,
+        aliasLength,
+        idLength,
+        recordCount,
+        "Success",
+        filePath,
+        filePath
+    )
+
     End Sub
 
-    Private Sub ExportForMotorolaXTSRadio(
-    aliasLength As Integer,
-    idLength As Integer
-)
+    Private Sub ShowExportFailure(targetFormat As String, aliasLength As Integer, idLength As Integer, filePath As String, errorMessage As String)
+
+        txtNotes.Text =
+        targetFormat &
+        " export failed." &
+        Environment.NewLine &
+        errorMessage
+
+        txtNotes.ForeColor = Color.Firebrick
+
+        AddExportLog(
+        targetFormat,
+        aliasLength,
+        idLength,
+        0,
+        "Failed",
+        filePath,
+        errorMessage
+    )
+
+    End Sub
+
+    Private Sub ExportForMotorolaXTSRadio(aliasLength As Integer, idLength As Integer)
 
         Dim records As List(Of RadioExportRecord) = Nothing
 
@@ -1788,12 +1868,13 @@ Public Class frmRadioCallListManager
 
         Catch ex As Exception
 
-            txtNotes.Text =
-            "Motorola XTS export failed." &
-            Environment.NewLine &
-            ex.Message
-
-            txtNotes.ForeColor = Color.Firebrick
+            ShowExportFailure(
+                "Motorola XTS",
+                aliasLength,
+                idLength,
+                filePath,
+                ex.Message
+            )
 
         End Try
 
@@ -1863,12 +1944,13 @@ Public Class frmRadioCallListManager
 
         Catch ex As Exception
 
-            txtNotes.Text =
-            "Motorola APX export failed." &
-            Environment.NewLine &
-            ex.Message
-
-            txtNotes.ForeColor = Color.Firebrick
+            ShowExportFailure(
+                "Harris RPM",
+                aliasLength,
+                idLength,
+                filePath,
+                ex.Message
+            )
 
         End Try
 
