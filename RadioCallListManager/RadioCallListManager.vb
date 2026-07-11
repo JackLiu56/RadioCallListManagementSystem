@@ -1,6 +1,8 @@
 ﻿Imports Microsoft.VisualBasic.FileIO
 Imports System.IO
 Imports System.Text
+Imports System.Xml.Linq
+Imports System.Linq
 
 Public Class RadioCallListManager
     Private savedRadioID As String
@@ -24,6 +26,15 @@ Public Class RadioCallListManager
 
         Public Property RadioID As String
         Public Property AliasText As String
+
+    End Class
+
+    Private Class RadioXmlMetadata
+
+        Public Property SystemName As String
+        Public Property WacnID As String
+        Public Property SystemID As String
+        Public Property ReferenceKey As String
 
     End Class
 
@@ -428,11 +439,260 @@ Public Class RadioCallListManager
 
     End Sub
 
+    Private Function GetXmlFieldValue(
+    parentElement As XElement,
+    fieldName As String
+) As String
+
+        Dim field As XElement =
+        parentElement.Descendants("Field").
+        FirstOrDefault(
+            Function(item)
+                Return String.Equals(
+                    CStr(item.Attribute("Name")),
+                    fieldName,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            End Function
+        )
+
+        If field Is Nothing Then
+            Return ""
+        End If
+
+        Return field.Value.Trim()
+
+    End Function
+
+    Private Function TryParseRadioReferenceKey(
+    referenceKey As String,
+    ByRef wacnHex As String,
+    ByRef systemIDHex As String,
+    ByRef unitID As String
+) As Boolean
+
+        wacnHex = ""
+        systemIDHex = ""
+        unitID = ""
+
+        If String.IsNullOrWhiteSpace(referenceKey) Then
+            Return False
+        End If
+
+        Dim parts As String() =
+        referenceKey.Split("-"c)
+
+        If parts.Length < 3 Then
+            Return False
+        End If
+
+        Dim wacnDecimal As Integer
+        Dim systemDecimal As Integer
+
+        Dim wacnText As String =
+        parts(parts.Length - 3).Trim()
+
+        Dim systemText As String =
+        parts(parts.Length - 2).Trim()
+
+        unitID =
+        parts(parts.Length - 1).Trim()
+
+        If Not Integer.TryParse(
+        wacnText,
+        wacnDecimal
+    ) Then
+            Return False
+        End If
+
+        If Not Integer.TryParse(
+        systemText,
+        systemDecimal
+    ) Then
+            Return False
+        End If
+
+        wacnHex =
+        wacnDecimal.ToString("X")
+
+        systemIDHex =
+        systemDecimal.ToString("X")
+
+        Return True
+
+    End Function
+
+    Private Sub ImportUnifiedCallListXml(filePath As String)
+
+        dgvContacts.Rows.Clear()
+
+        Dim document As XDocument =
+        XDocument.Load(filePath)
+
+        Dim importedCount As Integer = 0
+        Dim skippedCount As Integer = 0
+
+        Dim contactNodes =
+        document.Descendants("Node").
+        Where(
+            Function(node)
+                Return String.Equals(
+                    CStr(node.Attribute("Name")),
+                    "Contacts",
+                    StringComparison.OrdinalIgnoreCase
+                )
+            End Function
+        )
+
+        For Each contactNode As XElement In contactNodes
+
+            Dim contactNameField As XElement =
+            contactNode.Descendants("Field").
+            FirstOrDefault(
+                Function(field)
+                    Return String.Equals(
+                        CStr(field.Attribute("Name")),
+                        "Contact Name",
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                End Function
+            )
+
+            Dim contactName As String = ""
+
+            If contactNameField IsNot Nothing Then
+                contactName = contactNameField.Value.Trim()
+            End If
+
+            'A Contact may have multiple ASTRO 25 ID
+            Dim astroIDNodes =
+            contactNode.Descendants("EmbeddedNode").
+            Where(
+                Function(node)
+                    Return String.Equals(
+                        CStr(node.Attribute("Name")),
+                        "ASTRO 25 Trunking ID",
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                End Function
+            )
+
+            For Each astroNode As XElement In astroIDNodes
+
+                Dim unitID As String =
+                GetXmlFieldValue(
+                    astroNode,
+                    "Unit ID"
+                )
+
+                Dim systemName As String =
+                GetXmlFieldValue(
+                    astroNode,
+                    "System Name"
+                )
+
+                Dim referenceKey As String =
+                Convert.ToString(
+                    astroNode.Attribute("ReferenceKey")
+                ).Trim()
+
+                If String.IsNullOrWhiteSpace(unitID) Then
+                    skippedCount += 1
+                    Continue For
+                End If
+
+                Dim wacnHex As String = ""
+                Dim systemIDHex As String = ""
+                Dim unitIDFromReference As String = ""
+
+                TryParseRadioReferenceKey(
+                referenceKey,
+                wacnHex,
+                systemIDHex,
+                unitIDFromReference
+            )
+
+                Dim rowIndex As Integer =
+                dgvContacts.Rows.Add()
+
+                Dim row As DataGridViewRow =
+                dgvContacts.Rows(rowIndex)
+
+                row.Cells("colRadioID").Value =
+                unitID
+
+                'XML has Callsign, skip it
+                row.Cells("colCallsign").Value =
+                ""
+
+                row.Cells("colIP").Value =
+                ""
+
+                row.Cells("colMDTIP").Value =
+                ""
+
+                row.Cells("colRadioUser").Value =
+                contactName
+
+                row.Cells("colGroupID").Value =
+                ""
+
+                'Save XML other info on temp Tag
+                row.Tag =
+                New RadioXmlMetadata With {
+                    .systemName = systemName,
+                    .WacnID = wacnHex,
+                    .SystemID = systemIDHex,
+                    .referenceKey = referenceKey
+                }
+
+                importedCount += 1
+
+            Next
+
+        Next
+
+        If importedCount > 0 Then
+
+            dgvContacts.ClearSelection()
+
+            dgvContacts.Rows(0).Selected = True
+
+            dgvContacts.CurrentCell =
+            dgvContacts.Rows(0).
+            Cells("colRadioID")
+
+            ShowSelectedRecordDetails()
+
+        Else
+
+            ClearSelectedRecordDetails()
+
+        End If
+
+        txtNotes.Text =
+        "XML import completed." &
+        Environment.NewLine &
+        "Records imported: " &
+        importedCount.ToString() &
+        Environment.NewLine &
+        "Records skipped: " &
+        skippedCount.ToString()
+
+        txtNotes.ForeColor = Color.SeaGreen
+
+    End Sub
+
     Private Sub ToolStripImport_Click(sender As Object, e As EventArgs) Handles ToolStripImport.Click
         Using dialog As New OpenFileDialog()
 
+
             dialog.Title = "Import Radio ID Contact File"
-            dialog.Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*"
+            dialog.Filter =
+                "Supported Files (*.csv;*.xml)|*.csv;*.xml|" &
+                "CSV Files (*.csv)|*.csv|" &
+                "XML Files (*.xml)|*.xml|" &
+                "All Files (*.*)|*.*"
             dialog.CheckFileExists = True
             dialog.Multiselect = False
 
@@ -440,8 +700,19 @@ Public Class RadioCallListManager
                 Return
             End If
 
+            Dim extension As String = Path.GetExtension(dialog.FileName).ToLowerInvariant()
+
             Try
-                ImportContactsCsv(dialog.FileName)
+                Select Case extension
+                    Case ".csv"
+                        ImportContactsCsv(dialog.FileName)
+                    Case ".xml"
+                        ImportUnifiedCallListXml(dialog.FileName)
+                    Case Else
+                        txtNotes.Text = "Unsupported file type. Please select a CSV or XML file."
+                        txtNotes.ForeColor = Color.Firebrick
+                        Return
+                End Select
 
                 txtNotes.Text = dgvContacts.Rows.Count.ToString() + " radio records imported successfully." + "Import Complete"
 
