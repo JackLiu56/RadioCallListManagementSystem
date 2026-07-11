@@ -77,6 +77,9 @@ Public Class RadioCallListManager
         AddNewRecordToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.A
         AddNewRecordToolStripMenuItem.ShowShortcutKeys = True
 
+        ExportCallListToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Shift Or Keys.E
+        ExportCallListToolStripMenuItem.ShowShortcutKeys = True
+
     End Sub
 
     Private Sub ClearSelectedRecordDetails()
@@ -1191,6 +1194,215 @@ Public Class RadioCallListManager
 
     End Sub
 
+    Private Sub ExportForMotorolaXTSRadio(
+    aliasLength As Integer,
+    idLength As Integer
+)
+
+        Dim records As List(Of RadioExportRecord) = Nothing
+
+        If Not TryBuildExportRecords(
+        aliasLength,
+        idLength,
+        records
+    ) Then
+            Return
+        End If
+
+        Dim filePath As String =
+        SelectExportFilePath(
+            "Motorola_XTS_Call_List"
+        )
+
+        If filePath = "" Then
+
+            txtNotes.Text =
+            "Motorola XTS export was cancelled."
+
+            txtNotes.ForeColor = Color.DimGray
+            Return
+
+        End If
+
+        Try
+
+            Using writer As New StreamWriter(
+            filePath,
+            False,
+            New UTF8Encoding(False)
+        )
+                WriteCsvRow(
+                writer,
+                "__File Format Version__",
+                "0x01",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "",
+                "",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "",
+                "",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "__Feature__",
+                "Trunking Call List",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "",
+                "",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "__Record__",
+                "1 of 1 (""Trunking Call List"")",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "",
+                "",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "__Section__",
+                "General",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "",
+                "",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "__Field Name__",
+                " __Field Value__",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "List Alias",
+                "Export List",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "",
+                "",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "__Section__",
+                "List",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "",
+                "",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "__Field Names__",
+                "",
+                "",
+                ""
+            )
+
+                WriteCsvRow(
+                writer,
+                "Call List ID",
+                "Call List Text",
+                "WACN ID",
+                "System ID"
+            )
+
+                WriteCsvRow(
+                writer,
+                "__Field Values__",
+                "",
+                "",
+                ""
+            )
+
+                For Each record As RadioExportRecord _
+                In records
+
+                    WriteCsvRow(
+                    writer,
+                    record.RadioID,
+                    record.AliasText,
+                    DefaultWacnID,
+                    DefaultSystemID
+                )
+
+                Next
+
+            End Using
+
+            ShowExportSuccess(
+            "Motorola XTS",
+            filePath,
+            records.Count,
+            aliasLength,
+            idLength
+        )
+
+        Catch ex As Exception
+
+            txtNotes.Text =
+            "Motorola XTS export failed." &
+            Environment.NewLine &
+            ex.Message
+
+            txtNotes.ForeColor = Color.Firebrick
+
+        End Try
+
+    End Sub
+
     Private Sub ExportForMotorolaAPXRadio(aliasLength As Integer, idLength As Integer)
 
         Dim records As List(Of RadioExportRecord) = Nothing
@@ -1309,7 +1521,7 @@ Public Class RadioCallListManager
                 'ExportForEFJohnsonRadio(aliasLength, idLength)
 
             Case "Motorola XTS"
-                'ExportForMotorolaXTSRadio(aliasLength, idLength)
+                ExportForMotorolaXTSRadio(aliasLength, idLength)
 
             Case "Motorola APX"
                 ExportForMotorolaAPXRadio(aliasLength, idLength)
@@ -1325,5 +1537,9 @@ Public Class RadioCallListManager
 
         End Select
 
+    End Sub
+
+    Private Sub ExportCallListToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExportCallListToolStripMenuItem.Click
+        ToolStripExport_Click(sender, e)
     End Sub
 End Class

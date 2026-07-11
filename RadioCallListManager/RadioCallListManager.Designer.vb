@@ -1071,7 +1071,7 @@ Partial Class RadioCallListManager
         Me.lblLengthValue.Text = "0"
         Me.lblLengthValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'Form1
+        'RadioCallListManager
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -1080,7 +1080,7 @@ Partial Class RadioCallListManager
         Me.Controls.Add(Me.ToolStrip1)
         Me.Controls.Add(Me.MenuStrip1)
         Me.MainMenuStrip = Me.MenuStrip1
-        Me.Name = "Form1"
+        Me.Name = "RadioCallListManager"
         Me.Text = "Radio Call List Manager"
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
