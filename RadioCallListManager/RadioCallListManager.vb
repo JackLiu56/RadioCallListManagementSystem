@@ -2,7 +2,7 @@
 Imports System.IO
 Imports System.Text
 
-Public Class Form1
+Public Class RadioCallListManager
     Private savedRadioID As String
     Private savedCallsign As String
     Private savedIP As String
