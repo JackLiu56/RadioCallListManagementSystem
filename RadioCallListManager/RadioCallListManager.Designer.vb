@@ -22,6 +22,7 @@ Partial Class frmRadioCallListManager
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmRadioCallListManager))
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -80,6 +81,10 @@ Partial Class frmRadioCallListManager
         Me.ColMDTIP = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.colRadioUser = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.colGroupID = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.cmsContacts = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.AddSelectedRecordToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.EditSelectedRecordToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.DeleteSelectedRecordToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grpExportLog = New System.Windows.Forms.GroupBox()
@@ -132,6 +137,7 @@ Partial Class frmRadioCallListManager
         Me.MenuStrip1.SuspendLayout()
         Me.ToolStrip1.SuspendLayout()
         CType(Me.dgvContacts, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.cmsContacts.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -490,6 +496,7 @@ Partial Class frmRadioCallListManager
         Me.dgvContacts.AllowUserToDeleteRows = False
         Me.dgvContacts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgvContacts.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.colRadioID, Me.colCallsign, Me.colIP, Me.ColMDTIP, Me.colRadioUser, Me.colGroupID})
+        Me.dgvContacts.ContextMenuStrip = Me.cmsContacts
         Me.dgvContacts.Dock = System.Windows.Forms.DockStyle.Fill
         Me.dgvContacts.Location = New System.Drawing.Point(0, 0)
         Me.dgvContacts.Name = "dgvContacts"
@@ -533,6 +540,30 @@ Partial Class frmRadioCallListManager
         Me.colGroupID.HeaderText = "Group ID"
         Me.colGroupID.Name = "colGroupID"
         Me.colGroupID.ReadOnly = True
+        '
+        'cmsContacts
+        '
+        Me.cmsContacts.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddSelectedRecordToolStripMenuItem, Me.EditSelectedRecordToolStripMenuItem1, Me.DeleteSelectedRecordToolStripMenuItem1})
+        Me.cmsContacts.Name = "ContextMenuStrip1"
+        Me.cmsContacts.Size = New System.Drawing.Size(195, 70)
+        '
+        'AddSelectedRecordToolStripMenuItem
+        '
+        Me.AddSelectedRecordToolStripMenuItem.Name = "AddSelectedRecordToolStripMenuItem"
+        Me.AddSelectedRecordToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
+        Me.AddSelectedRecordToolStripMenuItem.Text = "Add New Record"
+        '
+        'EditSelectedRecordToolStripMenuItem1
+        '
+        Me.EditSelectedRecordToolStripMenuItem1.Name = "EditSelectedRecordToolStripMenuItem1"
+        Me.EditSelectedRecordToolStripMenuItem1.Size = New System.Drawing.Size(194, 22)
+        Me.EditSelectedRecordToolStripMenuItem1.Text = "Edit Selected Record"
+        '
+        'DeleteSelectedRecordToolStripMenuItem1
+        '
+        Me.DeleteSelectedRecordToolStripMenuItem1.Name = "DeleteSelectedRecordToolStripMenuItem1"
+        Me.DeleteSelectedRecordToolStripMenuItem1.Size = New System.Drawing.Size(194, 22)
+        Me.DeleteSelectedRecordToolStripMenuItem1.Text = "Delete Selected Record"
         '
         'SplitContainer1
         '
@@ -1101,6 +1132,7 @@ Partial Class frmRadioCallListManager
         Me.ToolStrip1.ResumeLayout(False)
         Me.ToolStrip1.PerformLayout()
         CType(Me.dgvContacts, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.cmsContacts.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1231,4 +1263,8 @@ Partial Class frmRadioCallListManager
     Friend WithEvents tsslSysName As ToolStripStatusLabel
     Friend WithEvents SaveRecordsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents SaveRecordsAsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents cmsContacts As ContextMenuStrip
+    Friend WithEvents EditSelectedRecordToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents DeleteSelectedRecordToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents AddSelectedRecordToolStripMenuItem As ToolStripMenuItem
 End Class

@@ -18,6 +18,7 @@ Public Class frmRadioCallListManager
     Private hasUnsavedChanges As Boolean = False
     Private isAddingNewRecord As Boolean = False
     Private editingRow As DataGridViewRow = Nothing
+    Private rightClickedRow As DataGridViewRow = Nothing
 
     Private Const DefaultWacnID As String = "DEE00"
     Private Const DefaultSystemID As String = "13B"
@@ -762,7 +763,7 @@ Public Class frmRadioCallListManager
     End Sub
 
     Private Sub ImportRadioIDFileToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ImportRadioIDFileToolStripMenuItem.Click
-        ToolStripImport_Click(sender, e)
+        ToolStripImport.PerformClick()
     End Sub
 
     Private Sub SetRecordEditMode(isEditing As Boolean)
@@ -1188,48 +1189,31 @@ Public Class frmRadioCallListManager
         FindContactRecord(searchText)
     End Sub
 
-    Private Sub DeleteSelectedRecordToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DeleteSelectedRecordToolStripMenuItem.Click
-        'Disable the delete feature on Editing Mode
-        If isEditMode Then
+    Private Sub DeleteSelectedRecords()
 
+        If isEditMode Then
             txtNotes.Text =
             "Please apply or reset the current changes before deleting records."
-
             txtNotes.ForeColor = Color.DarkOrange
             Return
-
         End If
 
-        'No Record is selected
         If dgvContacts.SelectedRows.Count = 0 Then
-
             txtNotes.Text =
             "Please select one or more records to delete."
-
             txtNotes.ForeColor = Color.DarkOrange
             Return
-
         End If
 
         Dim selectedCount As Integer =
         dgvContacts.SelectedRows.Count
 
-        Dim message As String
-
-        If selectedCount = 1 Then
-            message =
-            "Are you sure you want to delete the selected record?"
-        Else
-            message =
-            "Are you sure you want to delete these " &
-            selectedCount.ToString() &
-            " selected records?"
-        End If
-
         Dim result As DialogResult =
         MessageBox.Show(
-            message,
-            "Delete Selected Records",
+            "Are you sure you want to delete " &
+            selectedCount.ToString() &
+            " selected record(s)?",
+            "Delete Records",
             MessageBoxButtons.YesNo,
             MessageBoxIcon.Warning,
             MessageBoxDefaultButton.Button2
@@ -1241,52 +1225,38 @@ Public Class frmRadioCallListManager
             Return
         End If
 
-        'First, copy the selected rows to avoid changes to the SelectedRows collection during the deletion process.
         Dim rowsToDelete As New List(Of DataGridViewRow)
 
         For Each row As DataGridViewRow In dgvContacts.SelectedRows
-
             If Not row.IsNewRow Then
                 rowsToDelete.Add(row)
             End If
-
         Next
 
         'Delete from the bottom up to prevent row numbers from changing.
         rowsToDelete.Sort(
-        Function(row1, row2)
-            Return row2.Index.CompareTo(row1.Index)
+        Function(a, b)
+            Return b.Index.CompareTo(a.Index)
         End Function
     )
-
-        Dim nextRowIndex As Integer =
-        rowsToDelete(rowsToDelete.Count - 1).Index
 
         For Each row As DataGridViewRow In rowsToDelete
             dgvContacts.Rows.Remove(row)
         Next
 
-        'Select a nearby line after deletion
+        hasUnsavedChanges = True
+
         If dgvContacts.Rows.Count > 0 Then
 
-            If nextRowIndex >= dgvContacts.Rows.Count Then
-                nextRowIndex = dgvContacts.Rows.Count - 1
-            End If
-
             dgvContacts.ClearSelection()
-
-            dgvContacts.Rows(nextRowIndex).Selected = True
-
+            dgvContacts.Rows(0).Selected = True
             dgvContacts.CurrentCell =
-            dgvContacts.Rows(nextRowIndex).
-            Cells("colRadioID")
+            dgvContacts.Rows(0).Cells("colRadioID")
 
             ShowSelectedRecordDetails()
 
         Else
-
             ClearSelectedRecordDetails()
-
         End If
 
         txtNotes.Text =
@@ -1295,13 +1265,14 @@ Public Class frmRadioCallListManager
 
         txtNotes.ForeColor = Color.SeaGreen
 
-        'Summary
-        'UpdateValidationSummary()
+    End Sub
 
+    Private Sub DeleteSelectedRecordToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DeleteSelectedRecordToolStripMenuItem.Click
+        DeleteSelectedRecords()
     End Sub
 
     Private Sub ResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ResetToolStripMenuItem.Click
-        btnReset_Click(sender, e)
+        btnReset.PerformClick()
     End Sub
 
     Private Function GetGridCellText(row As DataGridViewRow, columnName As String) As String
@@ -1965,7 +1936,7 @@ Public Class frmRadioCallListManager
     End Sub
 
     Private Sub ExportCallListToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExportCallListToolStripMenuItem.Click
-        ToolStripExport_Click(sender, e)
+        ToolStripExport.PerformClick()
     End Sub
 
     Private Sub RefreshImportedFile()
@@ -2077,7 +2048,7 @@ Public Class frmRadioCallListManager
     End Sub
 
     Private Sub RefreshToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RefreshToolStripMenuItem.Click
-        ToolStripRefresh_Click(sender, e)
+        ToolStripRefresh.PerformClick()
     End Sub
 
     Private Sub SaveContactsAsCsv()
@@ -2234,7 +2205,7 @@ Public Class frmRadioCallListManager
     End Sub
 
     Private Sub SaveRecordsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveRecordsToolStripMenuItem.Click
-        ToolStripSave_Click(sender, e)
+        ToolStripSave.PerformClick()
     End Sub
 
     Private Sub SaveRecordsAsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveRecordsAsToolStripMenuItem.Click
@@ -2294,5 +2265,61 @@ Public Class frmRadioCallListManager
         "Enter the new record details, then click Apply Changes."
 
         txtNotes.ForeColor = Color.RoyalBlue
+    End Sub
+
+    Private Sub AddSelectedRecordToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AddSelectedRecordToolStripMenuItem.Click
+        AddNewRecordToolStripMenuItem.PerformClick()
+    End Sub
+
+    Private Sub EditSelectedRecordToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles EditSelectedRecordToolStripMenuItem1.Click
+        EditSelectedRecordToolStripMenuItem.PerformClick()
+    End Sub
+
+    Private Sub DeleteSelectedRecordToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles DeleteSelectedRecordToolStripMenuItem1.Click
+        DeleteSelectedRecords()
+    End Sub
+
+    Private Sub dgvContacts_MouseDown(sender As Object, e As MouseEventArgs) Handles dgvContacts.MouseDown
+
+        If e.Button <> MouseButtons.Right Then
+            Return
+        End If
+
+        Dim hitInfo As DataGridView.HitTestInfo =
+        dgvContacts.HitTest(e.X, e.Y)
+
+        If hitInfo.RowIndex < 0 Then
+            rightClickedRow = Nothing
+            Return
+        End If
+
+        rightClickedRow =
+        dgvContacts.Rows(hitInfo.RowIndex)
+
+        If Not rightClickedRow.Selected Then
+
+            'If right-clicked row is not selected, select it and deselect others
+            dgvContacts.ClearSelection()
+            rightClickedRow.Selected = True
+
+            If hitInfo.ColumnIndex >= 0 Then
+                dgvContacts.CurrentCell =
+                rightClickedRow.Cells(hitInfo.ColumnIndex)
+            Else
+                dgvContacts.CurrentCell =
+                rightClickedRow.Cells("colRadioID")
+            End If
+
+        Else
+
+        End If
+
+        'When right-clicking a row, show the context menu only if one row is selected and not in edit mode.
+        If dgvContacts.SelectedRows.Count = 1 AndAlso Not isEditMode Then
+
+            ShowSelectedRecordDetails()
+
+        End If
+
     End Sub
 End Class
