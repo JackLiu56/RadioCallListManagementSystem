@@ -876,7 +876,395 @@ Public Class Form1
         btnReset_Click(sender, e)
     End Sub
 
+    Private Function GetGridCellText(row As DataGridViewRow, columnName As String) As String
 
+        If Not dgvContacts.Columns.Contains(columnName) Then
+            Return ""
+        End If
+
+        Return Convert.ToString(
+        row.Cells(columnName).Value
+    ).Trim()
+
+    End Function
+
+    Private Function CreateExportAlias(sourceText As String, radioID As String, aliasLength As Integer, idLength As Integer) As String
+
+        Dim normalizedAlias As String =
+        Convert.ToString(sourceText).Trim()
+
+        radioID = Convert.ToString(radioID).Trim()
+
+        'Delete Alias continues extra space
+        While normalizedAlias.Contains("  ")
+            normalizedAlias =
+            normalizedAlias.Replace("  ", " ")
+        End While
+
+        Dim aliasPart As String
+
+        'Read Alias from left to right
+        If normalizedAlias.Length > aliasLength Then
+
+            aliasPart =
+            normalizedAlias.Substring(
+                0,
+                aliasLength
+            ).TrimEnd()
+
+        Else
+
+            aliasPart = normalizedAlias
+
+        End If
+
+        Dim idPart As String
+
+        'Read Radio ID from right to left
+        If radioID.Length > idLength Then
+
+            idPart =
+            radioID.Substring(
+                radioID.Length - idLength,
+                idLength
+            )
+
+        Else
+
+            idPart = radioID
+
+        End If
+
+        Return (
+        aliasPart & " " & idPart
+    ).Trim()
+
+    End Function
+
+    Private Function TryBuildExportRecords(aliasLength As Integer, idLength As Integer, ByRef exportRecords As List(Of RadioExportRecord)) As Boolean
+
+        exportRecords = New List(Of RadioExportRecord)
+
+        Dim errors As New List(Of String)
+
+        Dim usedRadioIDs As New HashSet(Of String)(
+        StringComparer.OrdinalIgnoreCase
+    )
+
+        For Each row As DataGridViewRow In dgvContacts.Rows
+
+            If row.IsNewRow Then Continue For
+
+            Dim displayedRowNumber As Integer =
+            row.Index + 1
+
+            Dim radioID As String =
+            GetGridCellText(row, "colRadioID")
+
+            Dim aliasSource As String =
+            GetGridCellText(row, "colRadioUser")
+
+            'Radio User is empty uses Callsign
+            If String.IsNullOrWhiteSpace(aliasSource) Then
+                aliasSource =
+                GetGridCellText(row, "colCallsign")
+            End If
+
+            Dim errorCountBefore As Integer =
+            errors.Count
+
+            If String.IsNullOrWhiteSpace(radioID) Then
+
+                errors.Add(
+                "Row " &
+                displayedRowNumber.ToString() &
+                ": Radio ID is required."
+            )
+
+            Else
+
+                If Not radioID.All(
+                Function(character)
+                    Return Char.IsDigit(character)
+                End Function
+            ) Then
+
+                    errors.Add(
+                    "Row " &
+                    displayedRowNumber.ToString() &
+                    ": Radio ID must contain numbers only."
+                )
+
+                End If
+
+                If radioID.Length < idLength Then
+
+                    errors.Add(
+                        "Row " &
+                        displayedRowNumber.ToString() &
+                        ": Radio ID must contain at least " &
+                        idLength.ToString() &
+                        " digits to generate the user alias."
+                    )
+
+                End If
+
+                If usedRadioIDs.Contains(radioID) Then
+
+                    errors.Add(
+                    "Row " &
+                    displayedRowNumber.ToString() &
+                    ": Duplicate Radio ID " &
+                    radioID &
+                    "."
+                )
+
+                Else
+                    usedRadioIDs.Add(radioID)
+                End If
+
+            End If
+
+            If String.IsNullOrWhiteSpace(aliasSource) Then
+
+                errors.Add(
+                "Row " &
+                displayedRowNumber.ToString() &
+                ": Radio User or Callsign is required."
+            )
+
+            End If
+
+            Dim exportAlias As String = CreateExportAlias(
+                aliasSource,
+                radioID,
+                aliasLength,
+                idLength
+            )
+
+            'Add this line to the export list if there are no errors.
+            If errors.Count = errorCountBefore Then
+
+                exportRecords.Add(
+                New RadioExportRecord With {
+                    .RadioID = radioID,
+                    .AliasText = exportAlias
+                }
+            )
+
+            End If
+
+        Next
+
+        If errors.Count > 0 Then
+
+            Dim displayedErrors As IEnumerable(Of String) =
+            errors.Take(10)
+
+            txtNotes.Text =
+            "Export stopped because validation errors were found:" &
+            Environment.NewLine &
+            Environment.NewLine &
+            String.Join(
+                Environment.NewLine,
+                displayedErrors
+            )
+
+            If errors.Count > 10 Then
+
+                txtNotes.Text &=
+                Environment.NewLine &
+                "...and " &
+                (errors.Count - 10).ToString() &
+                " more error(s)."
+
+            End If
+
+            txtNotes.ForeColor = Color.Firebrick
+            Return False
+
+        End If
+
+        If exportRecords.Count = 0 Then
+
+            txtNotes.Text =
+            "There are no records available to export."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return False
+
+        End If
+
+        Return True
+
+    End Function
+
+    Private Function SelectExportFilePath(defaultFileName As String) As String
+
+        Using dialog As New SaveFileDialog()
+
+            dialog.Title = "Export Radio Call List"
+            dialog.Filter =
+            "CSV Files (*.csv)|*.csv"
+
+            dialog.DefaultExt = "csv"
+            dialog.AddExtension = True
+            dialog.OverwritePrompt = True
+
+            dialog.FileName =
+            defaultFileName &
+            "_" &
+            DateTime.Now.ToString(
+                "yyyyMMdd_HHmmss"
+            ) &
+            ".csv"
+
+            If dialog.ShowDialog() =
+           DialogResult.OK Then
+
+                Return dialog.FileName
+
+            End If
+
+        End Using
+
+        Return ""
+
+    End Function
+
+    Private Function EscapeCsvValue(value As String) As String
+
+        If value Is Nothing Then
+            Return ""
+        End If
+
+        If value.Contains(",") OrElse
+       value.Contains("""") OrElse
+       value.Contains(vbCr) OrElse
+       value.Contains(vbLf) Then
+
+            Return """" &
+            value.Replace("""", """""") &
+            """"
+
+        End If
+
+        Return value
+
+    End Function
+
+    Private Sub WriteCsvRow(writer As StreamWriter, ParamArray values As String())
+
+        Dim escapedValues As New List(Of String)
+
+        For Each value As String In values
+            escapedValues.Add(
+            EscapeCsvValue(value)
+        )
+        Next
+
+        writer.WriteLine(
+        String.Join(",", escapedValues)
+    )
+
+    End Sub
+
+    Private Sub ShowExportSuccess(targetFormat As String, filePath As String, recordCount As Integer, aliasLength As Integer, idLength As Integer)
+
+        txtNotes.ForeColor = Color.SeaGreen
+
+        txtNotes.Text =
+        targetFormat &
+        " export completed successfully." &
+        Environment.NewLine &
+        "Records Exported: " &
+        recordCount.ToString() &
+        Environment.NewLine &
+        "Alias Length: " &
+        aliasLength.ToString() &
+        Environment.NewLine &
+        "Maximum ID Length: " &
+        idLength.ToString() &
+        Environment.NewLine &
+        "File: " &
+        filePath
+
+    End Sub
+
+    Private Sub ExportForMotorolaAPXRadio(aliasLength As Integer, idLength As Integer)
+
+        Dim records As List(Of RadioExportRecord) = Nothing
+
+        If Not TryBuildExportRecords(
+            aliasLength,
+            idLength,
+            records
+        ) Then
+            Return
+        End If
+
+        Dim filePath As String =
+        SelectExportFilePath(
+            "Motorola_APX_Call_List"
+        )
+
+        If filePath = "" Then
+
+            txtNotes.Text =
+            "Motorola APX export was cancelled."
+
+            txtNotes.ForeColor = Color.DimGray
+            Return
+
+        End If
+
+        Try
+
+            Using writer As New StreamWriter(
+            filePath,
+            False,
+            New UTF8Encoding(False)
+        )
+
+                WriteCsvRow(
+                writer,
+                "Radio ID",
+                "Radio User Alias"
+            )
+
+                For Each record As RadioExportRecord _
+                In records
+
+                    WriteCsvRow(
+                    writer,
+                    record.RadioID,
+                    record.AliasText
+                )
+
+                Next
+
+            End Using
+
+            ShowExportSuccess(
+            "Motorola APX",
+            filePath,
+            records.Count,
+            aliasLength,
+            idLength
+        )
+
+        Catch ex As Exception
+
+            txtNotes.Text =
+            "Motorola APX export failed." &
+            Environment.NewLine &
+            ex.Message
+
+            txtNotes.ForeColor = Color.Firebrick
+
+        End Try
+
+    End Sub
 
     Private Sub ToolStripExport_Click(sender As Object, e As EventArgs) Handles ToolStripExport.Click
         Dim aliasLength As Integer
@@ -895,8 +1283,8 @@ Public Class Form1
         End If
 
         If Not Integer.TryParse(
-        tsbIDLength.Text.Trim(),
-        idLength
+            tsbIDLength.Text.Trim(),
+            idLength
         ) OrElse idLength <= 0 Then
 
             txtNotes.Text =
@@ -924,7 +1312,7 @@ Public Class Form1
                 'ExportForMotorolaXTSRadio(aliasLength, idLength)
 
             Case "Motorola APX"
-                'ExportForMotorolaAPXRadio(aliasLength, idLength)
+                ExportForMotorolaAPXRadio(aliasLength, idLength)
 
             Case "Harris RPM"
                 'ExportForHarrisRPMRadio(aliasLength, idLength)
