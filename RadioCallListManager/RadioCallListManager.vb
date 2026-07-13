@@ -2607,4 +2607,8 @@ Public Class frmRadioCallListManager
     Private Sub FindDuplicatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FindDuplicatesToolStripMenuItem.Click
         SelectDuplicateRadioIDs()
     End Sub
+
+    Private Sub AboutRadioCallListManagerToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutRadioCallListManagerToolStripMenuItem.Click
+        MessageBox.Show(My.Application.Info.Version.ToString())
+    End Sub
 End Class
