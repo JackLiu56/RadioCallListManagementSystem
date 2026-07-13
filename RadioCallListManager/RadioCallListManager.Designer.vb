@@ -89,6 +89,12 @@ Partial Class frmRadioCallListManager
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grpExportLog = New System.Windows.Forms.GroupBox()
         Me.dgvExportLog = New System.Windows.Forms.DataGridView()
+        Me.colExportTime = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportFile = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportFormat = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportRecords = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportStatus = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colExportMessage = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.grpRecordDetails = New System.Windows.Forms.GroupBox()
         Me.btnReset = New System.Windows.Forms.Button()
         Me.btnApplyChanges = New System.Windows.Forms.Button()
@@ -121,12 +127,6 @@ Partial Class frmRadioCallListManager
         Me.lblDuplicatesValue = New System.Windows.Forms.Label()
         Me.lblMissingValue = New System.Windows.Forms.Label()
         Me.lblLengthValue = New System.Windows.Forms.Label()
-        Me.colExportTime = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportFile = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportFormat = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportRecords = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportStatus = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colExportMessage = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tsslWacnID = New System.Windows.Forms.ToolStripStatusLabel()
@@ -286,7 +286,7 @@ Partial Class frmRadioCallListManager
         '
         Me.VendorFormatSettingsToolStripMenuItem.Name = "VendorFormatSettingsToolStripMenuItem"
         Me.VendorFormatSettingsToolStripMenuItem.Size = New System.Drawing.Size(235, 22)
-        Me.VendorFormatSettingsToolStripMenuItem.Text = "Vendor Format Settings"
+        Me.VendorFormatSettingsToolStripMenuItem.Text = "Radio System Settings"
         '
         'ViewToolStripMenuItem
         '
@@ -297,18 +297,24 @@ Partial Class frmRadioCallListManager
         '
         'ShowValidationSummaryToolStripMenuItem
         '
+        Me.ShowValidationSummaryToolStripMenuItem.Checked = True
+        Me.ShowValidationSummaryToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
         Me.ShowValidationSummaryToolStripMenuItem.Name = "ShowValidationSummaryToolStripMenuItem"
         Me.ShowValidationSummaryToolStripMenuItem.Size = New System.Drawing.Size(212, 22)
         Me.ShowValidationSummaryToolStripMenuItem.Text = "Show Validation Summary"
         '
         'ShowRecordDetailsToolStripMenuItem
         '
+        Me.ShowRecordDetailsToolStripMenuItem.Checked = True
+        Me.ShowRecordDetailsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
         Me.ShowRecordDetailsToolStripMenuItem.Name = "ShowRecordDetailsToolStripMenuItem"
         Me.ShowRecordDetailsToolStripMenuItem.Size = New System.Drawing.Size(212, 22)
         Me.ShowRecordDetailsToolStripMenuItem.Text = "Show Record Details"
         '
         'ShowExportLogToolStripMenuItem
         '
+        Me.ShowExportLogToolStripMenuItem.Checked = True
+        Me.ShowExportLogToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
         Me.ShowExportLogToolStripMenuItem.Name = "ShowExportLogToolStripMenuItem"
         Me.ShowExportLogToolStripMenuItem.Size = New System.Drawing.Size(212, 22)
         Me.ShowExportLogToolStripMenuItem.Text = "Show Export Log"
@@ -629,6 +635,47 @@ Partial Class frmRadioCallListManager
         Me.dgvExportLog.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
         Me.dgvExportLog.Size = New System.Drawing.Size(690, 193)
         Me.dgvExportLog.TabIndex = 0
+        '
+        'colExportTime
+        '
+        Me.colExportTime.HeaderText = "Time"
+        Me.colExportTime.Name = "colExportTime"
+        Me.colExportTime.ReadOnly = True
+        Me.colExportTime.Width = 145
+        '
+        'colExportFile
+        '
+        Me.colExportFile.HeaderText = "File Name"
+        Me.colExportFile.Name = "colExportFile"
+        Me.colExportFile.ReadOnly = True
+        Me.colExportFile.Width = 180
+        '
+        'colExportFormat
+        '
+        Me.colExportFormat.HeaderText = "Format"
+        Me.colExportFormat.Name = "colExportFormat"
+        Me.colExportFormat.ReadOnly = True
+        '
+        'colExportRecords
+        '
+        Me.colExportRecords.HeaderText = "Records"
+        Me.colExportRecords.Name = "colExportRecords"
+        Me.colExportRecords.ReadOnly = True
+        Me.colExportRecords.Width = 70
+        '
+        'colExportStatus
+        '
+        Me.colExportStatus.HeaderText = "Status"
+        Me.colExportStatus.Name = "colExportStatus"
+        Me.colExportStatus.ReadOnly = True
+        Me.colExportStatus.Width = 80
+        '
+        'colExportMessage
+        '
+        Me.colExportMessage.HeaderText = "Message / Output Path"
+        Me.colExportMessage.Name = "colExportMessage"
+        Me.colExportMessage.ReadOnly = True
+        Me.colExportMessage.Width = 500
         '
         'grpRecordDetails
         '
@@ -1026,47 +1073,6 @@ Partial Class frmRadioCallListManager
         Me.lblLengthValue.TabIndex = 11
         Me.lblLengthValue.Text = "0"
         Me.lblLengthValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        'colExportTime
-        '
-        Me.colExportTime.HeaderText = "Time"
-        Me.colExportTime.Name = "colExportTime"
-        Me.colExportTime.ReadOnly = True
-        Me.colExportTime.Width = 145
-        '
-        'colExportFile
-        '
-        Me.colExportFile.HeaderText = "File Name"
-        Me.colExportFile.Name = "colExportFile"
-        Me.colExportFile.ReadOnly = True
-        Me.colExportFile.Width = 180
-        '
-        'colExportFormat
-        '
-        Me.colExportFormat.HeaderText = "Format"
-        Me.colExportFormat.Name = "colExportFormat"
-        Me.colExportFormat.ReadOnly = True
-        '
-        'colExportRecords
-        '
-        Me.colExportRecords.HeaderText = "Records"
-        Me.colExportRecords.Name = "colExportRecords"
-        Me.colExportRecords.ReadOnly = True
-        Me.colExportRecords.Width = 70
-        '
-        'colExportStatus
-        '
-        Me.colExportStatus.HeaderText = "Status"
-        Me.colExportStatus.Name = "colExportStatus"
-        Me.colExportStatus.ReadOnly = True
-        Me.colExportStatus.Width = 80
-        '
-        'colExportMessage
-        '
-        Me.colExportMessage.HeaderText = "Message / Output Path"
-        Me.colExportMessage.Name = "colExportMessage"
-        Me.colExportMessage.ReadOnly = True
-        Me.colExportMessage.Width = 500
         '
         'StatusStrip1
         '

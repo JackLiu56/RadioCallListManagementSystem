@@ -19,11 +19,8 @@ Public Class frmRadioCallListManager
     Private isAddingNewRecord As Boolean = False
     Private editingRow As DataGridViewRow = Nothing
     Private rightClickedRow As DataGridViewRow = Nothing
+    Private radiosystemSettings As New frmRadioSystemSettings()
 
-    Private Const DefaultWacnID As String = "DEE00"
-    Private Const DefaultSystemID As String = "13B"
-
-    Private Const HarrisListName As String = "CTRS"
     Private Const HarrisType As String = "Individual Call Set"
     Private Const HarrisDisplay As String = "Alpha & Numeric"
 
@@ -122,9 +119,9 @@ Public Class frmRadioCallListManager
         tscbTargetFormat.SelectedItem =
         "Motorola APX"
 
-        tsslWacnID.Text = DefaultWacnID
-        tsslSysID.Text = DefaultSystemID
-        tsslSysName.Text = HarrisListName
+        tsslWacnID.Text = My.Settings.RadioWacnID
+        tsslSysID.Text = My.Settings.RadioSystemID
+        tsslSysName.Text = My.Settings.RadioSystemName
 
         FindToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.F
         FindToolStripMenuItem.ShowShortcutKeys = True
@@ -1850,8 +1847,8 @@ Public Class frmRadioCallListManager
                     writer,
                     record.RadioID,
                     record.AliasText,
-                    DefaultWacnID,
-                    DefaultSystemID
+                    My.Settings.RadioWacnID,
+                    My.Settings.RadioSystemID
                 )
 
                 Next
@@ -2403,5 +2400,66 @@ Public Class frmRadioCallListManager
 
         End If
 
+    End Sub
+
+    Private Sub VendorFormatSettingsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles VendorFormatSettingsToolStripMenuItem.Click
+
+        Using settingsForm As New frmRadioSystemSettings()
+
+            If settingsForm.ShowDialog(Me) =
+           DialogResult.OK Then
+
+                txtNotes.Text =
+                "Radio system settings updated." &
+                Environment.NewLine &
+                "System Name: " &
+                My.Settings.RadioSystemName &
+                Environment.NewLine &
+                "System ID: " &
+                My.Settings.RadioSystemID &
+                Environment.NewLine &
+                "WACN ID: " &
+                My.Settings.RadioWacnID
+
+                txtNotes.ForeColor = Color.SeaGreen
+
+                tsslSysName.Text = My.Settings.RadioSystemName
+                tsslSysID.Text = My.Settings.RadioSystemID
+                tsslWacnID.Text = My.Settings.RadioWacnID
+
+            End If
+
+        End Using
+
+    End Sub
+
+    Private Sub ShowValidationSummaryToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ShowValidationSummaryToolStripMenuItem.Click
+        If ShowValidationSummaryToolStripMenuItem.Checked Then
+            grpValidationSummary.Visible = False
+            ShowValidationSummaryToolStripMenuItem.Checked = False
+        Else
+            grpValidationSummary.Visible = True
+            ShowValidationSummaryToolStripMenuItem.Checked = True
+        End If
+    End Sub
+
+    Private Sub ShowRecordDetailsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ShowRecordDetailsToolStripMenuItem.Click
+        If ShowRecordDetailsToolStripMenuItem.Checked Then
+            grpRecordDetails.Visible = False
+            ShowRecordDetailsToolStripMenuItem.Checked = False
+        Else
+            grpRecordDetails.Visible = True
+            ShowRecordDetailsToolStripMenuItem.Checked = True
+        End If
+    End Sub
+
+    Private Sub ShowExportLogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ShowExportLogToolStripMenuItem.Click
+        If ShowExportLogToolStripMenuItem.Checked Then
+            grpExportLog.Visible = False
+            ShowExportLogToolStripMenuItem.Checked = False
+        Else
+            grpExportLog.Visible = True
+            ShowExportLogToolStripMenuItem.Checked = True
+        End If
     End Sub
 End Class
