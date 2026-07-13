@@ -41,7 +41,6 @@ Partial Class frmRadioCallListManager
         Me.FindDuplicatesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ValidateRecordsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.GenerateAliasesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CleanUnsupportedCharactersToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.FieldMappingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.VendorFormatSettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -253,7 +252,7 @@ Partial Class frmRadioCallListManager
         '
         'ToolsToolStripMenuItem
         '
-        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ValidateRecordsToolStripMenuItem, Me.GenerateAliasesToolStripMenuItem, Me.CleanUnsupportedCharactersToolStripMenuItem, Me.FieldMappingToolStripMenuItem, Me.VendorFormatSettingsToolStripMenuItem})
+        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ValidateRecordsToolStripMenuItem, Me.CleanUnsupportedCharactersToolStripMenuItem, Me.FieldMappingToolStripMenuItem, Me.VendorFormatSettingsToolStripMenuItem})
         Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
         Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(47, 20)
         Me.ToolsToolStripMenuItem.Text = "Tools"
@@ -263,12 +262,6 @@ Partial Class frmRadioCallListManager
         Me.ValidateRecordsToolStripMenuItem.Name = "ValidateRecordsToolStripMenuItem"
         Me.ValidateRecordsToolStripMenuItem.Size = New System.Drawing.Size(235, 22)
         Me.ValidateRecordsToolStripMenuItem.Text = "Validate Records"
-        '
-        'GenerateAliasesToolStripMenuItem
-        '
-        Me.GenerateAliasesToolStripMenuItem.Name = "GenerateAliasesToolStripMenuItem"
-        Me.GenerateAliasesToolStripMenuItem.Size = New System.Drawing.Size(235, 22)
-        Me.GenerateAliasesToolStripMenuItem.Text = "Generate Aliases"
         '
         'CleanUnsupportedCharactersToolStripMenuItem
         '
@@ -341,26 +334,26 @@ Partial Class frmRadioCallListManager
         'UserGuideToolStripMenuItem
         '
         Me.UserGuideToolStripMenuItem.Name = "UserGuideToolStripMenuItem"
-        Me.UserGuideToolStripMenuItem.Size = New System.Drawing.Size(225, 22)
+        Me.UserGuideToolStripMenuItem.Size = New System.Drawing.Size(234, 22)
         Me.UserGuideToolStripMenuItem.Text = "User Guide"
         '
         'ImportFileFormatToolStripMenuItem
         '
         Me.ImportFileFormatToolStripMenuItem.Name = "ImportFileFormatToolStripMenuItem"
-        Me.ImportFileFormatToolStripMenuItem.Size = New System.Drawing.Size(225, 22)
+        Me.ImportFileFormatToolStripMenuItem.Size = New System.Drawing.Size(234, 22)
         Me.ImportFileFormatToolStripMenuItem.Text = "Import File Format"
         '
         'TroubleshootingToolStripMenuItem
         '
         Me.TroubleshootingToolStripMenuItem.Name = "TroubleshootingToolStripMenuItem"
-        Me.TroubleshootingToolStripMenuItem.Size = New System.Drawing.Size(225, 22)
+        Me.TroubleshootingToolStripMenuItem.Size = New System.Drawing.Size(234, 22)
         Me.TroubleshootingToolStripMenuItem.Text = "Troubleshooting"
         '
         'AboutRadioCallListManagerToolStripMenuItem
         '
         Me.AboutRadioCallListManagerToolStripMenuItem.Name = "AboutRadioCallListManagerToolStripMenuItem"
-        Me.AboutRadioCallListManagerToolStripMenuItem.Size = New System.Drawing.Size(225, 22)
-        Me.AboutRadioCallListManagerToolStripMenuItem.Text = "About RadioCallListManager"
+        Me.AboutRadioCallListManagerToolStripMenuItem.Size = New System.Drawing.Size(234, 22)
+        Me.AboutRadioCallListManagerToolStripMenuItem.Text = "About Radio Call List Manager"
         '
         'ToolStrip1
         '
@@ -1179,7 +1172,6 @@ Partial Class frmRadioCallListManager
     Friend WithEvents FindToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents FindDuplicatesToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ValidateRecordsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents GenerateAliasesToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CleanUnsupportedCharactersToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents FieldMappingToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents VendorFormatSettingsToolStripMenuItem As ToolStripMenuItem

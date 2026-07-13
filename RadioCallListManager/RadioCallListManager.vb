@@ -2462,4 +2462,23 @@ Public Class frmRadioCallListManager
             ShowExportLogToolStripMenuItem.Checked = True
         End If
     End Sub
+
+    Private Sub ResetLayoutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ResetLayoutToolStripMenuItem.Click
+        grpValidationSummary.Visible = True
+        ShowValidationSummaryToolStripMenuItem.Checked = True
+
+        grpRecordDetails.Visible = True
+        ShowRecordDetailsToolStripMenuItem.Checked = True
+
+        grpExportLog.Visible = True
+        ShowExportLogToolStripMenuItem.Checked = True
+    End Sub
+
+    Private Sub ExitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
+        Me.Close()
+    End Sub
+
+    Private Sub StatusStrip1_ItemClicked(sender As Object, e As ToolStripItemClickedEventArgs) Handles StatusStrip1.ItemClicked
+        VendorFormatSettingsToolStripMenuItem.PerformClick()
+    End Sub
 End Class
