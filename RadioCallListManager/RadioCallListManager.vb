@@ -150,6 +150,21 @@ Public Class frmRadioCallListManager
         SaveRecordsAsToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Shift Or Keys.S
         SaveRecordsAsToolStripMenuItem.ShowShortcutKeys = True
 
+        FindDuplicatesToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Shift Or Keys.D
+        FindDuplicatesToolStripMenuItem.ShowShortcutKeys = True
+
+        RefreshToolStripMenuItem.ShortcutKeys = Keys.F5
+        RefreshToolStripMenuItem.ShowShortcutKeys = True
+
+        UserGuideToolStripMenuItem.ShortcutKeys = Keys.F1
+        UserGuideToolStripMenuItem.ShowShortcutKeys = True
+
+        ResetLayoutToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Alt Or Keys.L
+        ResetLayoutToolStripMenuItem.ShowShortcutKeys = True
+
+        ExportValidationReportToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Shift Or Keys.V
+        ExportValidationReportToolStripMenuItem.ShowShortcutKeys = True
+
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
@@ -2480,5 +2495,116 @@ Public Class frmRadioCallListManager
 
     Private Sub StatusStrip1_ItemClicked(sender As Object, e As ToolStripItemClickedEventArgs) Handles StatusStrip1.ItemClicked
         VendorFormatSettingsToolStripMenuItem.PerformClick()
+    End Sub
+
+    Private Sub SelectDuplicateRadioIDs()
+
+        If isEditMode Then
+            txtNotes.Text =
+            "Please apply or reset the current record before finding duplicates."
+            Return
+        End If
+
+        Dim radioIDCounts As New Dictionary(Of String, Integer)(
+            StringComparer.OrdinalIgnoreCase
+        )
+
+        'First turn：analysis each Radio ID appear times
+        For Each row As DataGridViewRow In dgvContacts.Rows
+
+            If row.IsNewRow Then
+                Continue For
+            End If
+
+            Dim radioID As String =
+            Convert.ToString(
+                row.Cells("colRadioID").Value
+            ).Trim()
+
+            'Blank Radio ID doesn't count as duplicate
+            If String.IsNullOrWhiteSpace(radioID) Then
+                Continue For
+            End If
+
+            If radioIDCounts.ContainsKey(radioID) Then
+                radioIDCounts(radioID) += 1
+            Else
+                radioIDCounts.Add(radioID, 1)
+            End If
+
+        Next
+
+        dgvContacts.ClearSelection()
+
+        Dim duplicateRowCount As Integer = 0
+        Dim duplicateIDCount As Integer = 0
+        Dim firstDuplicateRow As DataGridViewRow = Nothing
+
+        'Calculate how many different Radio IDs that are duplicated
+        For Each item As KeyValuePair(Of String, Integer) In radioIDCounts
+
+            If item.Value > 1 Then
+                duplicateIDCount += 1
+            End If
+
+        Next
+
+        'Second turn：Select all duplicate rows
+        For Each row As DataGridViewRow In dgvContacts.Rows
+
+            If row.IsNewRow Then
+                Continue For
+            End If
+
+            Dim radioID As String =
+            Convert.ToString(
+                row.Cells("colRadioID").Value
+            ).Trim()
+
+            If radioID <> "" AndAlso
+           radioIDCounts.ContainsKey(radioID) AndAlso
+           radioIDCounts(radioID) > 1 Then
+
+                row.Selected = True
+                duplicateRowCount += 1
+
+                If firstDuplicateRow Is Nothing Then
+                    firstDuplicateRow = row
+                End If
+
+            End If
+
+        Next
+
+        If duplicateRowCount = 0 Then
+
+            txtNotes.Text =
+            "No duplicate Radio IDs were found."
+
+            txtNotes.ForeColor = Color.DarkGreen
+
+        Else
+
+            'Move to the first selected item without deselect others
+            If firstDuplicateRow IsNot Nothing Then
+                dgvContacts.FirstDisplayedScrollingRowIndex =
+                firstDuplicateRow.Index
+            End If
+
+            txtNotes.Text =
+            duplicateIDCount.ToString() &
+            " duplicate Radio ID value(s) found." &
+            Environment.NewLine &
+            duplicateRowCount.ToString() &
+            " record(s) selected."
+
+            txtNotes.ForeColor = Color.DarkOrange
+
+        End If
+
+    End Sub
+
+    Private Sub FindDuplicatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FindDuplicatesToolStripMenuItem.Click
+        SelectDuplicateRadioIDs()
     End Sub
 End Class
