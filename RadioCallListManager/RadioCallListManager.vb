@@ -97,7 +97,7 @@ Public Class frmRadioCallListManager
         lblErrorsValue.ForeColor = Color.Firebrick
         lblDuplicatesValue.ForeColor = Color.Firebrick
         lblMissingValue.ForeColor = Color.DarkOrange
-        lblLengthValue.ForeColor = Color.Firebrick
+        lblLengthViations.ForeColor = Color.Firebrick
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -2610,5 +2610,351 @@ Public Class frmRadioCallListManager
 
     Private Sub AboutRadioCallListManagerToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutRadioCallListManagerToolStripMenuItem.Click
         MessageBox.Show(My.Application.Info.Version.ToString())
+    End Sub
+
+    Private Function GetCellText(
+        row As DataGridViewRow,
+        columnName As String
+    ) As String
+
+        If Not dgvContacts.Columns.Contains(columnName) Then
+            Return ""
+        End If
+
+        Return Convert.ToString(
+        row.Cells(columnName).Value
+    ).Trim()
+
+    End Function
+
+    Private Function IsAllDigits(
+        value As String
+    ) As Boolean
+
+        If String.IsNullOrWhiteSpace(value) Then
+            Return False
+        End If
+
+        For Each ch As Char In value
+
+            If Not Char.IsDigit(ch) Then
+                Return False
+            End If
+
+        Next
+
+        Return True
+
+    End Function
+
+    Private Sub HighlightCell(
+        row As DataGridViewRow,
+        columnName As String,
+        backColor As Color
+    )
+
+        If dgvContacts.Columns.Contains(columnName) Then
+
+            row.Cells(columnName).Style.BackColor =
+            backColor
+
+        End If
+
+    End Sub
+
+    Private Sub ClearRowValidationStyle(
+        row As DataGridViewRow
+    )
+
+        For Each cell As DataGridViewCell In row.Cells
+
+            cell.Style.BackColor = Color.Empty
+            cell.Style.ForeColor = Color.Empty
+
+        Next
+
+    End Sub
+
+    Private Sub UpdateValidationSummary(
+        totalRecords As Integer,
+        validRecords As Integer,
+        errorRecords As Integer,
+        duplicateRecords As Integer,
+        missingRecords As Integer,
+        lengthViolationRecords As Integer
+    )
+
+        lblTotalValue.Text = totalRecords.ToString()
+        lblValidValue.Text = validRecords.ToString()
+        lblErrorsValue.Text = errorRecords.ToString()
+        lblDuplicatesValue.Text = duplicateRecords.ToString()
+        lblMissingValue.Text = missingRecords.ToString()
+        lblLengthViations.Text = lengthViolationRecords.ToString()
+
+        lblTotalValue.ForeColor = Color.Black
+        lblValidValue.ForeColor = Color.SeaGreen
+
+        If errorRecords > 0 Then
+            lblErrorsValue.ForeColor = Color.Firebrick
+        Else
+            lblErrorsValue.ForeColor = Color.SeaGreen
+        End If
+
+        If duplicateRecords > 0 Then
+            lblDuplicatesValue.ForeColor = Color.Firebrick
+        Else
+            lblDuplicatesValue.ForeColor = Color.SeaGreen
+        End If
+
+        If missingRecords > 0 Then
+            lblMissingValue.ForeColor = Color.Firebrick
+        Else
+            lblMissingValue.ForeColor = Color.SeaGreen
+        End If
+
+        If lengthViolationRecords > 0 Then
+            lblLengthViations.ForeColor = Color.DarkOrange
+        Else
+            lblLengthViations.ForeColor = Color.SeaGreen
+        End If
+
+    End Sub
+
+    Private Sub ValidateAllContacts()
+
+        If isEditMode Then
+
+            txtNotes.Text =
+            "Please apply or reset the current record before running validation."
+
+            txtNotes.ForeColor = Color.DarkOrange
+            Return
+
+        End If
+
+        Dim aliasLength As Integer
+        Dim idLength As Integer
+
+        If Not Integer.TryParse(tsbAliasLength.Text.Trim(), aliasLength) OrElse
+       aliasLength <= 0 Then
+
+            MessageBox.Show(
+            "Alias Length must be a positive number.",
+            "Invalid Validation Setting",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning
+        )
+
+            tsbAliasLength.Focus()
+            Return
+
+        End If
+
+        If Not Integer.TryParse(tsbIDLength.Text.Trim(), idLength) OrElse
+       idLength <= 0 Then
+
+            MessageBox.Show(
+            "ID Length must be a positive number.",
+            "Invalid Validation Setting",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning
+        )
+
+            tsbIDLength.Focus()
+            Return
+
+        End If
+
+        dgvContacts.ClearSelection()
+
+        Dim radioIDCounts As New Dictionary(Of String, Integer)(
+        StringComparer.OrdinalIgnoreCase
+    )
+
+        'First pass: count occurrences of each Radio ID
+        For Each row As DataGridViewRow In dgvContacts.Rows
+
+            If row.IsNewRow Then
+                Continue For
+            End If
+
+            Dim radioID As String =
+            GetCellText(row, "colRadioID")
+
+            If radioID <> "" Then
+
+                If radioIDCounts.ContainsKey(radioID) Then
+                    radioIDCounts(radioID) += 1
+                Else
+                    radioIDCounts.Add(radioID, 1)
+                End If
+
+            End If
+
+        Next
+
+        Dim totalRecords As Integer = 0
+        Dim validRecords As Integer = 0
+        Dim errorRecords As Integer = 0
+        Dim duplicateRecords As Integer = 0
+        Dim missingRecords As Integer = 0
+        Dim lengthViolationRecords As Integer = 0
+
+        Dim firstIssueRow As DataGridViewRow = Nothing
+
+        'Second pass: validate each row and highlight issues
+        For Each row As DataGridViewRow In dgvContacts.Rows
+
+            If row.IsNewRow Then
+                Continue For
+            End If
+
+            totalRecords += 1
+
+            ClearRowValidationStyle(row)
+
+            Dim radioID As String =
+            GetCellText(row, "colRadioID")
+
+            Dim callsign As String =
+            GetCellText(row, "colCallsign")
+
+            Dim radioUser As String =
+            GetCellText(row, "colRadioUser")
+
+            Dim aliasSource As String = radioUser
+
+            If aliasSource = "" Then
+                aliasSource = callsign
+            End If
+
+            Dim rowHasError As Boolean = False
+            Dim rowHasWarning As Boolean = False
+            Dim messages As New List(Of String)
+
+            '1. Valid Radio ID
+            If radioID <> "" AndAlso
+            radioIDCounts.ContainsKey(radioID) AndAlso
+            radioIDCounts(radioID) = 1 Then
+
+                validRecords += 1
+                HighlightCell(row, "colRadioID", Color.LightGreen)
+
+            End If
+
+            '2. Missing Radio ID
+            If radioID = "" Then
+
+                rowHasError = True
+                errorRecords += 1
+                missingRecords += 1
+                messages.Add("Radio ID is missing.")
+
+                HighlightCell(row, "colRadioID", Color.MistyRose)
+
+            ElseIf Not IsAllDigits(radioID) Then
+
+                rowHasError = True
+                errorRecords += 1
+                messages.Add("Radio ID must be numeric.")
+
+                HighlightCell(row, "colRadioID", Color.MistyRose)
+
+            End If
+
+            '3. Missing alias source
+            If aliasSource = "" Then
+
+                rowHasError = True
+                errorRecords += 1
+                missingRecords += 1
+                messages.Add("Radio User or Callsign is missing.")
+
+                HighlightCell(row, "colRadioUser", Color.MistyRose)
+                HighlightCell(row, "colCallsign", Color.MistyRose)
+
+            End If
+
+            '4. Duplicate Radio ID
+            If radioID <> "" AndAlso
+            radioIDCounts.ContainsKey(radioID) AndAlso
+            radioIDCounts(radioID) > 1 Then
+
+                rowHasError = True
+                errorRecords += 1
+                duplicateRecords += 1
+                messages.Add("Duplicate Radio ID.")
+
+                HighlightCell(row, "colRadioID", Color.MistyRose)
+
+            End If
+
+            '5. ID length violation
+            If radioID <> "" AndAlso
+            IsAllDigits(radioID) AndAlso
+            radioID.Length < idLength Then
+
+                rowHasWarning = True
+                lengthViolationRecords += 1
+                messages.Add("Radio ID is shorter than ID Length setting.")
+
+                HighlightCell(row, "colRadioID", Color.LemonChiffon)
+
+            End If
+
+            '6. Alias length warning
+            If aliasSource <> "" AndAlso
+            aliasSource.Length < aliasLength Then
+
+                rowHasWarning = True
+                lengthViolationRecords += 1
+                messages.Add("Alias source is shorter than Alias Length setting.")
+
+                If radioUser <> "" Then
+                    HighlightCell(row, "colRadioUser", Color.LemonChiffon)
+                Else
+                    HighlightCell(row, "colCallsign", Color.LemonChiffon)
+                End If
+
+            End If
+
+        Next
+
+        UpdateValidationSummary(
+            totalRecords,
+            validRecords,
+            errorRecords,
+            duplicateRecords,
+            missingRecords,
+            lengthViolationRecords
+        )
+
+        If firstIssueRow IsNot Nothing Then
+
+            dgvContacts.FirstDisplayedScrollingRowIndex =
+            firstIssueRow.Index
+
+        End If
+
+        txtNotes.Text =
+            "Validation completed." &
+            Environment.NewLine
+
+        If errorRecords > 0 Then
+            txtNotes.ForeColor = Color.Firebrick
+        ElseIf lengthViolationRecords > 0 Then
+            txtNotes.ForeColor = Color.DarkOrange
+        Else
+            txtNotes.ForeColor = Color.SeaGreen
+        End If
+
+    End Sub
+
+    Private Sub ToolStripValidate_Click(sender As Object, e As EventArgs) Handles ToolStripValidate.Click
+        ValidateAllContacts()
+    End Sub
+
+    Private Sub ValidateRecordsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ValidateRecordsToolStripMenuItem.Click
+        ToolStripValidate.PerformClick()
     End Sub
 End Class
