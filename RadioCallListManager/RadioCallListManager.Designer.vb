@@ -115,11 +115,17 @@ Partial Class frmRadioCallListManager
         Me.grpValidationSummary = New System.Windows.Forms.GroupBox()
         Me.tblValidationSummary = New System.Windows.Forms.TableLayoutPanel()
         Me.lblTotalText = New System.Windows.Forms.Label()
+        Me.lblValidText = New System.Windows.Forms.Label()
+        Me.lblErrorsText = New System.Windows.Forms.Label()
         Me.lblDuplicatesText = New System.Windows.Forms.Label()
         Me.lblMissingText = New System.Windows.Forms.Label()
+        Me.lblLengthText = New System.Windows.Forms.Label()
         Me.lblTotalValue = New System.Windows.Forms.Label()
+        Me.lblValidValue = New System.Windows.Forms.Label()
+        Me.lblErrorsValue = New System.Windows.Forms.Label()
         Me.lblDuplicatesValue = New System.Windows.Forms.Label()
         Me.lblMissingValue = New System.Windows.Forms.Label()
+        Me.lblLengthViations = New System.Windows.Forms.Label()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tsslWacnID = New System.Windows.Forms.ToolStripStatusLabel()
@@ -127,12 +133,6 @@ Partial Class frmRadioCallListManager
         Me.tsslSysID = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripStatusLabel3 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tsslSysName = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.lblLengthViations = New System.Windows.Forms.Label()
-        Me.lblValidText = New System.Windows.Forms.Label()
-        Me.lblValidValue = New System.Windows.Forms.Label()
-        Me.lblErrorsValue = New System.Windows.Forms.Label()
-        Me.lblErrorsText = New System.Windows.Forms.Label()
-        Me.lblLengthText = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout()
         Me.ToolStrip1.SuspendLayout()
         CType(Me.dgvContacts, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -940,6 +940,28 @@ Partial Class frmRadioCallListManager
         Me.lblTotalText.Text = "Total Records:"
         Me.lblTotalText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
+        'lblValidText
+        '
+        Me.lblValidText.AutoSize = True
+        Me.lblValidText.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lblValidText.Location = New System.Drawing.Point(13, 43)
+        Me.lblValidText.Name = "lblValidText"
+        Me.lblValidText.Size = New System.Drawing.Size(346, 33)
+        Me.lblValidText.TabIndex = 1
+        Me.lblValidText.Text = "Valid:"
+        Me.lblValidText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'lblErrorsText
+        '
+        Me.lblErrorsText.AutoSize = True
+        Me.lblErrorsText.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lblErrorsText.Location = New System.Drawing.Point(13, 76)
+        Me.lblErrorsText.Name = "lblErrorsText"
+        Me.lblErrorsText.Size = New System.Drawing.Size(346, 33)
+        Me.lblErrorsText.TabIndex = 2
+        Me.lblErrorsText.Text = "Errors:"
+        Me.lblErrorsText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
         'lblDuplicatesText
         '
         Me.lblDuplicatesText.AutoSize = True
@@ -962,6 +984,17 @@ Partial Class frmRadioCallListManager
         Me.lblMissingText.Text = "Missing IDs:"
         Me.lblMissingText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
+        'lblLengthText
+        '
+        Me.lblLengthText.AutoSize = True
+        Me.lblLengthText.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lblLengthText.Location = New System.Drawing.Point(13, 175)
+        Me.lblLengthText.Name = "lblLengthText"
+        Me.lblLengthText.Size = New System.Drawing.Size(346, 36)
+        Me.lblLengthText.TabIndex = 5
+        Me.lblLengthText.Text = "Length Violations:"
+        Me.lblLengthText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
         'lblTotalValue
         '
         Me.lblTotalValue.AutoSize = True
@@ -973,6 +1006,30 @@ Partial Class frmRadioCallListManager
         Me.lblTotalValue.TabIndex = 6
         Me.lblTotalValue.Text = "0"
         Me.lblTotalValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'lblValidValue
+        '
+        Me.lblValidValue.AutoSize = True
+        Me.lblValidValue.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lblValidValue.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblValidValue.Location = New System.Drawing.Point(365, 43)
+        Me.lblValidValue.Name = "lblValidValue"
+        Me.lblValidValue.Size = New System.Drawing.Size(146, 33)
+        Me.lblValidValue.TabIndex = 7
+        Me.lblValidValue.Text = "0"
+        Me.lblValidValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'lblErrorsValue
+        '
+        Me.lblErrorsValue.AutoSize = True
+        Me.lblErrorsValue.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lblErrorsValue.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblErrorsValue.Location = New System.Drawing.Point(365, 76)
+        Me.lblErrorsValue.Name = "lblErrorsValue"
+        Me.lblErrorsValue.Size = New System.Drawing.Size(146, 33)
+        Me.lblErrorsValue.TabIndex = 8
+        Me.lblErrorsValue.Text = "0"
+        Me.lblErrorsValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'lblDuplicatesValue
         '
@@ -997,6 +1054,18 @@ Partial Class frmRadioCallListManager
         Me.lblMissingValue.TabIndex = 10
         Me.lblMissingValue.Text = "0"
         Me.lblMissingValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'lblLengthViations
+        '
+        Me.lblLengthViations.AutoSize = True
+        Me.lblLengthViations.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lblLengthViations.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblLengthViations.Location = New System.Drawing.Point(365, 175)
+        Me.lblLengthViations.Name = "lblLengthViations"
+        Me.lblLengthViations.Size = New System.Drawing.Size(146, 36)
+        Me.lblLengthViations.TabIndex = 11
+        Me.lblLengthViations.Text = "0"
+        Me.lblLengthViations.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'StatusStrip1
         '
@@ -1046,75 +1115,6 @@ Partial Class frmRadioCallListManager
         Me.tsslSysName.Size = New System.Drawing.Size(56, 17)
         Me.tsslSysName.Text = "SysName"
         '
-        'lblLengthViations
-        '
-        Me.lblLengthViations.AutoSize = True
-        Me.lblLengthViations.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblLengthViations.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblLengthViations.Location = New System.Drawing.Point(365, 175)
-        Me.lblLengthViations.Name = "lblLengthViations"
-        Me.lblLengthViations.Size = New System.Drawing.Size(146, 36)
-        Me.lblLengthViations.TabIndex = 11
-        Me.lblLengthViations.Text = "0"
-        Me.lblLengthViations.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        'lblValidText
-        '
-        Me.lblValidText.AutoSize = True
-        Me.lblValidText.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblValidText.Location = New System.Drawing.Point(13, 43)
-        Me.lblValidText.Name = "lblValidText"
-        Me.lblValidText.Size = New System.Drawing.Size(346, 33)
-        Me.lblValidText.TabIndex = 1
-        Me.lblValidText.Text = "Valid:"
-        Me.lblValidText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        '
-        'lblValidValue
-        '
-        Me.lblValidValue.AutoSize = True
-        Me.lblValidValue.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblValidValue.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblValidValue.Location = New System.Drawing.Point(365, 43)
-        Me.lblValidValue.Name = "lblValidValue"
-        Me.lblValidValue.Size = New System.Drawing.Size(146, 33)
-        Me.lblValidValue.TabIndex = 7
-        Me.lblValidValue.Text = "0"
-        Me.lblValidValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        'lblErrorsValue
-        '
-        Me.lblErrorsValue.AutoSize = True
-        Me.lblErrorsValue.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblErrorsValue.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblErrorsValue.Location = New System.Drawing.Point(365, 76)
-        Me.lblErrorsValue.Name = "lblErrorsValue"
-        Me.lblErrorsValue.Size = New System.Drawing.Size(146, 33)
-        Me.lblErrorsValue.TabIndex = 8
-        Me.lblErrorsValue.Text = "0"
-        Me.lblErrorsValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        'lblErrorsText
-        '
-        Me.lblErrorsText.AutoSize = True
-        Me.lblErrorsText.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblErrorsText.Location = New System.Drawing.Point(13, 76)
-        Me.lblErrorsText.Name = "lblErrorsText"
-        Me.lblErrorsText.Size = New System.Drawing.Size(346, 33)
-        Me.lblErrorsText.TabIndex = 2
-        Me.lblErrorsText.Text = "Errors:"
-        Me.lblErrorsText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        '
-        'lblLengthText
-        '
-        Me.lblLengthText.AutoSize = True
-        Me.lblLengthText.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblLengthText.Location = New System.Drawing.Point(13, 175)
-        Me.lblLengthText.Name = "lblLengthText"
-        Me.lblLengthText.Size = New System.Drawing.Size(346, 36)
-        Me.lblLengthText.TabIndex = 5
-        Me.lblLengthText.Text = "Length Violations:"
-        Me.lblLengthText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        '
         'frmRadioCallListManager
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1124,6 +1124,7 @@ Partial Class frmRadioCallListManager
         Me.Controls.Add(Me.ToolStrip1)
         Me.Controls.Add(Me.MenuStrip1)
         Me.Controls.Add(Me.StatusStrip1)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Name = "frmRadioCallListManager"
         Me.Text = "Radio Call List Manager"
